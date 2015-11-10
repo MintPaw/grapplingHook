@@ -40,4 +40,10 @@ class GameState extends FlxState
 			add(_player);
 		}
 	}
+
+	override public function update(elapsed:Float):Void
+	{
+		FlxG.collide(_tilemap, _player);
+		super.update(elapsed);
+	}
 }
