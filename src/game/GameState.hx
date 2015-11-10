@@ -8,6 +8,7 @@ import flixel.addons.editors.tiled.TiledTileLayer;
 class GameState extends FlxState
 {
 	private var _tilemap:FlxTilemap;
+	private var _player:Player;
 
 	public function new()
 	{
@@ -30,7 +31,13 @@ class GameState extends FlxState
 					null,
 					1);
 			add(_tilemap);
-			//_tilemap.
+		}
+
+		{ // Setup player
+			_player = new Player();
+			_player.x = 300;
+			_player.y = 200;
+			add(_player);
 		}
 	}
 }
