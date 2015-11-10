@@ -3,6 +3,7 @@
 	
 	<meta title="GrapplingHook" package="com.sample.grapplinghook" version="1.0.0" company="Company Name" />
 	<app main="Main" path="bin" file="GrapplingHook" />
+	<window width="1280" height="720" />
 	
 	<source path="src" />
 	
