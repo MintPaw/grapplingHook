@@ -22,9 +22,9 @@ class GameState extends FlxState
 			var tiledMap:TiledMap = new TiledMap("assets/map/test.tmx");
 			
 			_tilemap = new FlxTilemap();
-			_tilemap.loadMapFromCSV( 
+			_tilemap.loadMapFromCSV(
 					cast(tiledMap.layers[0], TiledTileLayer).csvData,
-					"assets/img/tilemap.png",
+					"assets/" + tiledMap.tilesetArray[0].imageSource.substr(3),
 					32,
 					32,
 					null,
