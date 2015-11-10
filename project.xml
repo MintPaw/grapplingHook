@@ -9,6 +9,7 @@
 	
 	<haxelib name="openfl" />
 	<haxelib name="flixel" />
+	<haxelib name="flixel-addons" />
 	
 	<assets path="assets" />
 	
