@@ -44,10 +44,10 @@ class Player extends FlxSprite
 		var hook:Bool = false;
 
 		{ // Update inputs
-			if (FlxG.keys.pressed.LEFT) left = true;
-			if (FlxG.keys.pressed.RIGHT) right = true;
-			if (FlxG.keys.pressed.UP) up = true;
-			if (FlxG.keys.pressed.DOWN) down = true;
+			if (FlxG.keys.pressed.LEFT || FlxG.keys.pressed.A) left = true;
+			if (FlxG.keys.pressed.RIGHT || FlxG.keys.pressed.D) right = true;
+			if (FlxG.keys.pressed.UP || FlxG.keys.pressed.W) up = true;
+			if (FlxG.keys.pressed.DOWN || FlxG.keys.pressed.S) down = true;
 			if (FlxG.keys.pressed.SPACE) jump = true;
 			if (FlxG.mouse.justPressed) hook = true;
 
