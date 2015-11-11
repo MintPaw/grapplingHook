@@ -1,6 +1,7 @@
 package game;
 
 import flixel.FlxSprite;
+import flixel.FlxG;
 
 class Player extends FlxSprite
 {
@@ -18,6 +19,18 @@ class Player extends FlxSprite
 
 	override public function update(elapsed:Float):Void
 	{
+		var left:Bool = false;
+		var right:Bool = false;
+		var up:Bool = false;
+		var down:Bool = false;
+		var jump:Bool = false;
+		{ // Update keys
+			if (FlxG.keys.pressed.LEFT) left = true;
+			if (FlxG.keys.pressed.RIGHT) right = true;
+			if (FlxG.keys.pressed.UP) up = true;
+			if (FlxG.keys.pressed.DOWN) down = true;
+			if (FlxG.keys.pressed.SPACE) jump = true;
+		}
 		super.update(elapsed);
 	}
 }
