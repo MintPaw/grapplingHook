@@ -63,6 +63,15 @@ class Player extends FlxSprite
 			if (hook && hookDistance != 0) hook = false;
 		}
 
+		{ // Update hooking
+			if (hookDistance > 0) {
+				velocity.x = hookDirection.x * HOOK_SPEED;
+				velocity.y = hookDirection.y * HOOK_SPEED;
+				hookDistance = hookTo.distanceTo(getMidpoint());
+				if (hookDistance <= width * 2) hookDistance = 0;
+			}
+		}
+
 		{ // Update movement
 			if (hookDistance == 0) {
 				acceleration.x = 0;
@@ -78,20 +87,10 @@ class Player extends FlxSprite
 						hookDirection.copyFrom(hookTo);
 						hookDirection.subtractPoint(getMidpoint());
 						hookDirection.normalize();
+						// FlxG.log(hookDirection);
 					}
 				}
 			}
-		}
-
-		{ // Update hooking
-			if (hookDistance > 0) {
-				velocity.x = hookDirection.x * HOOK_SPEED;
-				velocity.y = hookDirection.y * HOOK_SPEED;
-			}
-		}
-
-		{ // Update physics
-
 		}
 
 		super.update(elapsed);
