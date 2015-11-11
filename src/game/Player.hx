@@ -4,6 +4,9 @@ import flixel.FlxSprite;
 import flixel.FlxObject;
 import flixel.FlxG;
 import flixel.math.FlxAngle;
+import flixel.math.FlxVelocity;
+import flixel.math.FlxVector;
+import flixel.math.FlxPoint;
 
 class Player extends FlxSprite
 {
@@ -12,9 +15,13 @@ class Player extends FlxSprite
 	private static inline var GRAVITY_FACTOR:Float = 2;
 	private static inline var MAX_SPEED:Float = 400;
 	private static inline var MAX_FALL:Float = 600;
+	
+	public var hookCallback:Dynamic;
 
-	public var angle_facing:Float = 0;
-	public var hooking:Bool = false;
+	public var angleFacing:Float = 0;
+	public var hookTo:FlxVector = new FlxVector();
+	public var hookDistance:Float = 0;
+	public var hookDirection:FlxVector = new FlxVector();
 
 	public function new()
 	{
@@ -44,12 +51,12 @@ class Player extends FlxSprite
 			if (FlxG.keys.pressed.SPACE) jump = true;
 			if (FlxG.mouse.justPressed) hook = true;
 
-			angle_facing = FlxAngle.angleBetweenMouse(this, false);
+			angleFacing = FlxAngle.angleBetweenMouse(this, false);
 		}
 
 		{ // Update input logic
 			if (jump && !isTouching(FlxObject.DOWN)) jump = false;
-			if (hook && hooking) hooking = false;
+			if (hook && hookTo != null) hook = false;
 		}
 
 		{ // Update movement
@@ -57,6 +64,18 @@ class Player extends FlxSprite
 			if (left) acceleration.x -= maxVelocity.x * ACC_FACTOR;
 			if (right) acceleration.x += maxVelocity.x * ACC_FACTOR;
 			if (jump)	velocity.y -= maxVelocity.y * JUMP_FACTOR;
+			if (hook) {
+				var tempHookTo:FlxPoint = hookCallback(getMidpoint(), angleFacing);
+				hookTo.x = tempHookTo.x;
+				hookTo.y = tempHookTo.y;
+				FlxG.log.add("hookTo: " + hookTo);
+				if (hookTo != null) {
+					hookDirection.copyFrom(hookTo);
+					hookDirection.subtractPoint(getMidpoint());
+					hookDirection.normalize();
+					FlxG.log.add(hookDirection);
+				}
+			}
 		}
 
 		super.update(elapsed);
