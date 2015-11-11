@@ -14,6 +14,7 @@ class Player extends FlxSprite
 	private static inline var MAX_FALL:Float = 600;
 
 	public var angle_facing:Float = 0;
+	public var hooking:Bool = false;
 
 	public function new()
 	{
@@ -33,6 +34,7 @@ class Player extends FlxSprite
 		var up:Bool = false;
 		var down:Bool = false;
 		var jump:Bool = false;
+		var hook:Bool = false;
 
 		{ // Update inputs
 			if (FlxG.keys.pressed.LEFT) left = true;
@@ -40,15 +42,23 @@ class Player extends FlxSprite
 			if (FlxG.keys.pressed.UP) up = true;
 			if (FlxG.keys.pressed.DOWN) down = true;
 			if (FlxG.keys.pressed.SPACE) jump = true;
+			if (FlxG.mouse.justPressed) hook = true;
 
 			angle_facing = FlxAngle.angleBetweenMouse(this, false);
 		}
 
-		acceleration.x = 0;
-		if (left) acceleration.x -= maxVelocity.x * ACC_FACTOR;
-		if (right) acceleration.x += maxVelocity.x * ACC_FACTOR;
-		if (jump && isTouching(FlxObject.DOWN))
-			velocity.y -= maxVelocity.y * JUMP_FACTOR;
+		{ // Update input logic
+			if (jump && !isTouching(FlxObject.DOWN)) jump = false;
+			if (hook && hooking) hooking = false;
+		}
+
+		{ // Update movement
+			acceleration.x = 0;
+			if (left) acceleration.x -= maxVelocity.x * ACC_FACTOR;
+			if (right) acceleration.x += maxVelocity.x * ACC_FACTOR;
+			if (jump)	velocity.y -= maxVelocity.y * JUMP_FACTOR;
+		}
+
 		super.update(elapsed);
 	}
 }
