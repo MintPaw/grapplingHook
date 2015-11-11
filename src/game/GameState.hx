@@ -64,8 +64,8 @@ class GameState extends FlxState
 		var result:FlxPoint = new FlxPoint();
 		var end:FlxPoint = new FlxPoint();
 
-		end.x = loc.x + Math.cos(a)*1000;
-		end.y = loc.y + Math.sin(a)*1000;
+		end.x = loc.x + Math.cos(a)*2000;
+		end.y = loc.y + Math.sin(a)*2000;
 		var bad:Bool = _tilemap.ray(loc, end, result);
 
 		FlxSpriteUtil.drawLine(_canvas, loc.x, loc.y, result.x, result.y,

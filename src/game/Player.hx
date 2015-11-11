@@ -22,10 +22,6 @@ class Player extends FlxSprite
 	public var angleFacing:Float = 0;
 	public var hookTo:FlxVector = new FlxVector();
 	public var hookDistance:Float = 0;
-	public var hookDirection:FlxVector = new FlxVector();
-	
-	public var movementAcc:FlxPoint = new FlxPoint();
-	public var hookVelo:FlxPoint = new FlxPoint();
 
 	public function new()
 	{
@@ -65,8 +61,7 @@ class Player extends FlxSprite
 
 		{ // Update hooking
 			if (hookDistance > 0) {
-				velocity.x = hookDirection.x * HOOK_SPEED;
-				velocity.y = hookDirection.y * HOOK_SPEED;
+				FlxVelocity.moveTowardsPoint(this, hookTo, HOOK_SPEED);
 				hookDistance = hookTo.distanceTo(getMidpoint());
 				if (hookDistance <= width * 2) hookDistance = 0;
 			}
@@ -84,10 +79,6 @@ class Player extends FlxSprite
 						hookTo.x = tempHookTo.x;
 						hookTo.y = tempHookTo.y;
 						hookDistance = hookTo.distanceTo(getMidpoint());
-						hookDirection.copyFrom(hookTo);
-						hookDirection.subtractPoint(getMidpoint());
-						hookDirection.normalize();
-						// FlxG.log(hookDirection);
 					}
 				}
 			}
