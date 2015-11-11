@@ -2,8 +2,10 @@ package game;
 
 import flixel.FlxG;
 import flixel.FlxState;
+import flixel.FlxSprite;
 import flixel.math.FlxPoint;
 import flixel.tile.FlxTilemap;
+import flixel.util.FlxSpriteUtil;
 import flixel.addons.editors.tiled.TiledMap;
 import flixel.addons.editors.tiled.TiledTileLayer;
 
@@ -11,6 +13,7 @@ class GameState extends FlxState
 {
 	private var _tilemap:FlxTilemap;
 	private var _player:Player;
+	private var _canvas:FlxSprite;
 
 	public function new()
 	{
@@ -20,6 +23,12 @@ class GameState extends FlxState
 	override public function create():Void
 	{
 		super.create();
+
+		{ // Setup shape
+			_canvas = new FlxSprite();
+			_canvas.makeGraphic(FlxG.width, FlxG.height, 0);
+			add(_canvas);
+		}
 
 		{ // Setup tilemap
 			var tiledMap:TiledMap = new TiledMap("assets/map/test.tmx");
@@ -59,10 +68,10 @@ class GameState extends FlxState
 		end.y = loc.y + Math.sin(a)*1000;
 		var bad:Bool = _tilemap.ray(loc, end, result);
 
-		FlxG.log.add("--" + bad);
+		FlxSpriteUtil.drawLine(_canvas, loc.x, loc.y, result.x, result.y,
+				{ thickness: 1, color: 0xFFFF0000 });
 
 		if (bad) return null;
-		FlxG.log.add("Going to return: " + result);
 		return result;
 	}
 }

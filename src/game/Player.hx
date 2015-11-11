@@ -15,6 +15,7 @@ class Player extends FlxSprite
 	private static inline var GRAVITY_FACTOR:Float = 2;
 	private static inline var MAX_SPEED:Float = 400;
 	private static inline var MAX_FALL:Float = 600;
+	private static inline var HOOK_SPEED:Float = 400;
 	
 	public var hookCallback:Dynamic;
 
@@ -22,6 +23,9 @@ class Player extends FlxSprite
 	public var hookTo:FlxVector = new FlxVector();
 	public var hookDistance:Float = 0;
 	public var hookDirection:FlxVector = new FlxVector();
+	
+	public var movementAcc:FlxPoint = new FlxPoint();
+	public var hookVelo:FlxPoint = new FlxPoint();
 
 	public function new()
 	{
@@ -56,7 +60,7 @@ class Player extends FlxSprite
 
 		{ // Update input logic
 			if (jump && !isTouching(FlxObject.DOWN)) jump = false;
-			if (hook && hookTo != null) hook = false;
+			if (hook && hookDistance != 0) hook = false;
 		}
 
 		{ // Update movement
@@ -66,16 +70,26 @@ class Player extends FlxSprite
 			if (jump)	velocity.y -= maxVelocity.y * JUMP_FACTOR;
 			if (hook) {
 				var tempHookTo:FlxPoint = hookCallback(getMidpoint(), angleFacing);
-				hookTo.x = tempHookTo.x;
-				hookTo.y = tempHookTo.y;
-				FlxG.log.add("hookTo: " + hookTo);
-				if (hookTo != null) {
+				if (tempHookTo != null) {
+					hookTo.x = tempHookTo.x;
+					hookTo.y = tempHookTo.y;
+					hookDistance = hookTo.distanceTo(getMidpoint());
 					hookDirection.copyFrom(hookTo);
 					hookDirection.subtractPoint(getMidpoint());
 					hookDirection.normalize();
-					FlxG.log.add(hookDirection);
 				}
 			}
+		}
+
+		{ // Update hooking
+			if (hookDistance > 0) {
+				// velocity.x = hookDirection.x * HOOK_SPEED;
+				// velocity.y = hookDirection.y * HOOK_SPEED;
+			}
+		}
+
+		{ // Update physics
+
 		}
 
 		super.update(elapsed);
