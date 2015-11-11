@@ -1,5 +1,6 @@
 package game;
 
+import flixel.FlxG;
 import flixel.FlxState;
 import flixel.tile.FlxTilemap;
 import flixel.addons.editors.tiled.TiledMap;
