@@ -64,27 +64,29 @@ class Player extends FlxSprite
 		}
 
 		{ // Update movement
-			acceleration.x = 0;
-			if (left) acceleration.x -= maxVelocity.x * ACC_FACTOR;
-			if (right) acceleration.x += maxVelocity.x * ACC_FACTOR;
-			if (jump)	velocity.y -= maxVelocity.y * JUMP_FACTOR;
-			if (hook) {
-				var tempHookTo:FlxPoint = hookCallback(getMidpoint(), angleFacing);
-				if (tempHookTo != null) {
-					hookTo.x = tempHookTo.x;
-					hookTo.y = tempHookTo.y;
-					hookDistance = hookTo.distanceTo(getMidpoint());
-					hookDirection.copyFrom(hookTo);
-					hookDirection.subtractPoint(getMidpoint());
-					hookDirection.normalize();
+			if (hookDistance == 0) {
+				acceleration.x = 0;
+				if (left) acceleration.x -= maxVelocity.x * ACC_FACTOR;
+				if (right) acceleration.x += maxVelocity.x * ACC_FACTOR;
+				if (jump)	velocity.y -= maxVelocity.y * JUMP_FACTOR;
+				if (hook) {
+					var tempHookTo:FlxPoint = hookCallback(getMidpoint(), angleFacing);
+					if (tempHookTo != null) {
+						hookTo.x = tempHookTo.x;
+						hookTo.y = tempHookTo.y;
+						hookDistance = hookTo.distanceTo(getMidpoint());
+						hookDirection.copyFrom(hookTo);
+						hookDirection.subtractPoint(getMidpoint());
+						hookDirection.normalize();
+					}
 				}
 			}
 		}
 
 		{ // Update hooking
 			if (hookDistance > 0) {
-				// velocity.x = hookDirection.x * HOOK_SPEED;
-				// velocity.y = hookDirection.y * HOOK_SPEED;
+				velocity.x = hookDirection.x * HOOK_SPEED;
+				velocity.y = hookDirection.y * HOOK_SPEED;
 			}
 		}
 
