@@ -44,7 +44,7 @@ class GameState extends FlxState
 
 	override public function update(elapsed:Float):Void
 	{
-		FlxG.collide(_tilemap, _player);
 		super.update(elapsed);
+		FlxG.collide(_tilemap, _player);
 	}
 }
