@@ -1,6 +1,7 @@
 package game;
 
 import flixel.FlxSprite;
+import flixel.FlxObject;
 import flixel.FlxG;
 
 class Player extends FlxSprite
@@ -24,6 +25,7 @@ class Player extends FlxSprite
 		var up:Bool = false;
 		var down:Bool = false;
 		var jump:Bool = false;
+
 		{ // Update keys
 			if (FlxG.keys.pressed.LEFT) left = true;
 			if (FlxG.keys.pressed.RIGHT) right = true;
@@ -31,6 +33,11 @@ class Player extends FlxSprite
 			if (FlxG.keys.pressed.DOWN) down = true;
 			if (FlxG.keys.pressed.SPACE) jump = true;
 		}
+
+		acceleration.x = 0;
+		if (left) acceleration.x -= maxVelocity.x * 8;
+		if (right) acceleration.x += maxVelocity.x * 8;
+		if (jump && isTouching(FlxObject.DOWN)) velocity.y -= maxVelocity.y * 8;
 		super.update(elapsed);
 	}
 }
