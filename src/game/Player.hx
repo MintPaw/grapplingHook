@@ -6,13 +6,18 @@ import flixel.FlxG;
 
 class Player extends FlxSprite
 {
+	private static inline var ACC_FACTOR:Int = 8;
+	private static inline var JUMP_FACTOR:Float = 0.75;
+	private static inline var GRAVITY_FACTOR:Float = 2;
+	private static inline var MAX_SPEED:Float = 400;
+	private static inline var MAX_FALL:Float = 600;
 
 	public function new()
 	{
 		super();
 
-		maxVelocity.set(800, 800);
-		acceleration.y = maxVelocity.y * 8;
+		maxVelocity.set(MAX_SPEED, MAX_FALL);
+		acceleration.y = maxVelocity.y * GRAVITY_FACTOR;
 		drag.x = maxVelocity.x * 4;
 		
 		makeGraphic(30, 30, 0xFF000055);
@@ -35,9 +40,10 @@ class Player extends FlxSprite
 		}
 
 		acceleration.x = 0;
-		if (left) acceleration.x -= maxVelocity.x * 8;
-		if (right) acceleration.x += maxVelocity.x * 8;
-		if (jump && isTouching(FlxObject.DOWN)) velocity.y -= maxVelocity.y * 8;
+		if (left) acceleration.x -= maxVelocity.x * ACC_FACTOR;
+		if (right) acceleration.x += maxVelocity.x * ACC_FACTOR;
+		if (jump && isTouching(FlxObject.DOWN))
+			velocity.y -= maxVelocity.y * JUMP_FACTOR;
 		super.update(elapsed);
 	}
 }
