@@ -28,6 +28,7 @@ class GameState extends FlxState
 			_canvas = new FlxSprite();
 			_canvas.makeGraphic(FlxG.width, FlxG.height, 0);
 			add(_canvas);
+			Reg.canvas = _canvas;
 		}
 
 		{ // Setup tilemap
@@ -74,4 +75,5 @@ class GameState extends FlxState
 		if (bad) return null;
 		return result;
 	}
+
 }

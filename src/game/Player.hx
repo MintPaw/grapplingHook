@@ -20,6 +20,7 @@ class Player extends FlxSprite
 	public var hookCallback:Dynamic;
 
 	public var angleFacing:Float = 0;
+	public var angVelo:Float = 0;
 	public var hookTo:FlxVector = new FlxVector();
 	public var hookDistance:Float = 0;
 
@@ -28,7 +29,6 @@ class Player extends FlxSprite
 		super();
 
 		maxVelocity.set(MAX_SPEED, MAX_FALL);
-		acceleration.y = maxVelocity.y * GRAVITY_FACTOR;
 		drag.x = maxVelocity.x * 4;
 		
 		makeGraphic(30, 30, 0xFF000055);
@@ -61,7 +61,20 @@ class Player extends FlxSprite
 
 		{ // Update hooking
 			if (hookDistance > 0) {
-				FlxVelocity.moveTowardsPoint(this, hookTo, HOOK_SPEED);
+				velocity.set();
+				if (hookDistance > 300) {
+					FlxVelocity.moveTowardsPoint(this, hookTo, HOOK_SPEED);
+					angVelo = 0;
+				} else {
+					var r:FlxPoint = new FlxPoint();
+					var angAcc:Float = 
+						-2 * Math.cos(FlxAngle.angleBetweenPoint(this, hookTo));
+					r.x = x;
+					r.y = y;
+					angVelo += angAcc;
+					r.rotate(hookTo, angVelo);
+					FlxVelocity.moveTowardsPoint(this, r, 500);
+				}
 				hookDistance = hookTo.distanceTo(getMidpoint());
 				if (hookDistance <= width * 2) hookDistance = 0;
 			}
@@ -70,12 +83,15 @@ class Player extends FlxSprite
 		{ // Update movement
 			if (hookDistance == 0) {
 				acceleration.x = 0;
+				acceleration.y = maxVelocity.y * GRAVITY_FACTOR;
 				if (left) acceleration.x -= maxVelocity.x * ACC_FACTOR;
 				if (right) acceleration.x += maxVelocity.x * ACC_FACTOR;
 				if (jump)	velocity.y -= maxVelocity.y * JUMP_FACTOR;
 				if (hook) {
 					var tempHookTo:FlxPoint = hookCallback(getMidpoint(), angleFacing);
 					if (tempHookTo != null) {
+						velocity.set();
+						acceleration.set();
 						hookTo.x = tempHookTo.x;
 						hookTo.y = tempHookTo.y;
 						hookDistance = hookTo.distanceTo(getMidpoint());
