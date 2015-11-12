@@ -62,20 +62,26 @@ class Player extends FlxSprite
 		{ // Update hooking
 			if (hookDistance > 0) {
 				velocity.set();
+
 				if (hookDistance > 300) {
 					FlxVelocity.moveTowardsPoint(this, hookTo, HOOK_SPEED);
 					angVelo = 0;
 				} else {
+					var angleBetween:Float = 
+						Math.atan2(hookTo.y - getMidpoint().y, hookTo.x - getMidpoint().x);
+
 					var r:FlxPoint = new FlxPoint();
-					var angAcc:Float = 
-						-2 * Math.cos(FlxAngle.angleBetweenPoint(this, hookTo));
-					r.x = x;
-					r.y = y;
-					angVelo += angAcc;
+					r.copyFrom(getMidpoint());
+					angVelo += -0.5 * Math.cos(angleBetween);
 					r.rotate(hookTo, angVelo);
-					FlxVelocity.moveTowardsPoint(this, r, 500);
+					//x = r.x - width / 2;
+					//y = r.y - height / 2;
+					FlxVelocity.moveTowardsPoint(this, r, 0, Std.int(elapsed*1000));
+					Reg.drawPoint(getMidpoint().x, getMidpoint().y, 0xFFFF0000);
 				}
+
 				hookDistance = hookTo.distanceTo(getMidpoint());
+				FlxG.log.add(hookDistance);
 				if (hookDistance <= width * 2) hookDistance = 0;
 			}
 		}

@@ -69,8 +69,7 @@ class GameState extends FlxState
 		end.y = loc.y + Math.sin(a)*2000;
 		var bad:Bool = _tilemap.ray(loc, end, result);
 
-		FlxSpriteUtil.drawLine(_canvas, loc.x, loc.y, result.x, result.y,
-				{ thickness: 1, color: 0xFFFF0000 });
+		Reg.drawLine(loc.x, loc.y, result.x, result.y, 0xFFFF0000);
 
 		if (bad) return null;
 		return result;
