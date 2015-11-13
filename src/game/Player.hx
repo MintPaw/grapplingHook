@@ -74,9 +74,9 @@ class Player extends FlxSprite
 					r.copyFrom(getMidpoint());
 					angVelo += -0.5 * Math.cos(angleBetween);
 					r.rotate(hookTo, angVelo);
-					//x = r.x - width / 2;
-					//y = r.y - height / 2;
-					FlxVelocity.moveTowardsPoint(this, r, 0, Std.int(elapsed*1000));
+					x = r.x - width / 2;
+					y = r.y - height / 2;
+					//FlxVelocity.moveTowardsPoint(this, r, 0, Std.int(elapsed*1000));
 					Reg.drawPoint(getMidpoint().x, getMidpoint().y, 0xFFFF0000);
 				}
 
