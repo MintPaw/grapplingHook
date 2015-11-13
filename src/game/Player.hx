@@ -80,8 +80,8 @@ class Player extends FlxSprite
 					hookPoint.x += pullVelo.x;
 					hookPoint.y += pullVelo.y;
 					pullVelo.put();
-					angVelo = 0;
 				}
+
 				var angleBetween:Float = 
 					Math.atan2(hookTo.y - hookPoint.y, hookTo.x - hookPoint.x);
 

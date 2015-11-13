@@ -57,7 +57,20 @@ class GameState extends FlxState
 	override public function update(elapsed:Float):Void
 	{
 		super.update(elapsed);
-		FlxG.collide(_tilemap, _player);
+
+		{ // Update collision
+			FlxG.collide(_tilemap, _player);
+		}
+
+		{ // Update drawing api
+			_canvas.pixels.fillRect(_canvas.pixels.rect, 0);
+			if (_player.state == Player.HOOKING)
+				Reg.drawLine(_player.hookPoint.x, 
+				             _player.hookPoint.y,
+										 _player.hookTo.x,
+										 _player.hookTo.y,
+										 0xFFFF0000);
+		}
 	}
 
 	private function hook(loc:FlxPoint, a:Float):FlxPoint
@@ -68,8 +81,6 @@ class GameState extends FlxState
 		end.x = loc.x + Math.cos(a)*2000;
 		end.y = loc.y + Math.sin(a)*2000;
 		var bad:Bool = _tilemap.ray(loc, end, result);
-
-		Reg.drawLine(loc.x, loc.y, result.x, result.y, 0xFFFF0000);
 
 		if (bad) return null;
 		return result;
