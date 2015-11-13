@@ -16,6 +16,7 @@ class Player extends FlxSprite
 	private static inline var MAX_SPEED:Float = 400;
 	private static inline var MAX_FALL:Float = 600;
 	private static inline var HOOK_SPEED:Float = 400;
+	private static inline var CLIMB_SPEED:Float = 3;
 
 	public static inline var IDLE:Int = 0;
 	public static inline var WALKING:Int = 1;
@@ -75,19 +76,19 @@ class Player extends FlxSprite
 					pullVelo.copyFrom(hookTo);
 					pullVelo.subtractPoint(hookPoint);
 					pullVelo.normalize();
-					pullVelo.scale(3);
+					pullVelo.scale(CLIMB_SPEED);
 					hookPoint.x += pullVelo.x;
 					hookPoint.y += pullVelo.y;
+					pullVelo.put();
 					angVelo = 0;
-				} else {
-					var angleBetween:Float = 
-						Math.atan2(hookTo.y - hookPoint.y, hookTo.x - hookPoint.x);
-
-					angVelo += -1 * Math.cos(angleBetween);
-					angVelo *= .95;
-					hookPoint.rotate(hookTo, angVelo);
-					//Reg.drawPoint(hookPoint.x, hookPoint.y, 0xFFFF0000);
 				}
+				var angleBetween:Float = 
+					Math.atan2(hookTo.y - hookPoint.y, hookTo.x - hookPoint.x);
+
+				angVelo += -1 * Math.cos(angleBetween);
+				angVelo *= .95;
+				hookPoint.rotate(hookTo, angVelo);
+				//Reg.drawPoint(hookPoint.x, hookPoint.y, 0xFFFF0000);
 
 				FlxVelocity.moveTowardsPoint(this, hookPoint, 0, 16);
 				hookDistance = hookTo.distanceTo(getMidpoint());
