@@ -23,6 +23,7 @@ class Player extends FlxSprite
 	public var angVelo:Float = 0;
 	public var hookTo:FlxVector = new FlxVector();
 	public var hookDistance:Float = 0;
+	public var hookPoint:FlxPoint = new FlxPoint(-1, -1);
 
 	public function new()
 	{
@@ -67,26 +68,23 @@ class Player extends FlxSprite
 					FlxVelocity.moveTowardsPoint(this, hookTo, HOOK_SPEED);
 					angVelo = 0;
 				} else {
-					var angleBetween:Float = 
-						Math.atan2(hookTo.y - getMidpoint().y, hookTo.x - getMidpoint().x);
+					if (hookPoint.x == -1) hookPoint.copyFrom(getMidpoint());
 
-					var r:FlxPoint = new FlxPoint();
-					r.copyFrom(getMidpoint());
-					angVelo += -0.5 * Math.cos(angleBetween);
-					r.rotate(hookTo, angVelo);
-					x = r.x - width / 2;
-					y = r.y - height / 2;
-					//FlxVelocity.moveTowardsPoint(this, r, 0, Std.int(elapsed*1000));
-					Reg.drawPoint(getMidpoint().x, getMidpoint().y, 0xFFFF0000);
+					var angleBetween:Float = 
+						Math.atan2(hookTo.y - hookPoint.y, hookTo.x - hookPoint.x);
+
+					angVelo += -1 * Math.cos(angleBetween);
+					angVelo *= .95;
+					hookPoint.rotate(hookTo, angVelo);
+					FlxVelocity.moveTowardsPoint(this, hookPoint, 0, 16);
+					//Reg.drawPoint(hookPoint.x, hookPoint.y, 0xFFFF0000);
 				}
 
 				hookDistance = hookTo.distanceTo(getMidpoint());
-				FlxG.log.add(hookDistance);
-				if (hookDistance <= width * 2) hookDistance = 0;
 			}
 		}
 
-		{ // Update movement
+		{ // Update ground movement
 			if (hookDistance == 0) {
 				acceleration.x = 0;
 				acceleration.y = maxVelocity.y * GRAVITY_FACTOR;
