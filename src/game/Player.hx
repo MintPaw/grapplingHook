@@ -62,11 +62,6 @@ class Player extends FlxSprite
 			angleFacing = FlxAngle.angleBetweenMouse(this, false);
 		}
 
-		{ // Update input logic
-			if (jump && !isTouching(FlxObject.DOWN)) jump = false;
-			if (hook && hookDistance != 0) hook = false;
-		}
-
 		{ // Update hooking
 			if (state == HOOKING) {
 				velocity.set();
@@ -103,6 +98,8 @@ class Player extends FlxSprite
 					hookPoint.y = oldY;
 				}
 				if (hookDistance <= width * 2) hookDistance = 0;
+
+				if (jump) switchState(IDLE);
 			}
 		}
 
@@ -112,7 +109,8 @@ class Player extends FlxSprite
 				acceleration.y = maxVelocity.y * GRAVITY_FACTOR;
 				if (left) acceleration.x -= maxVelocity.x * ACC_FACTOR;
 				if (right) acceleration.x += maxVelocity.x * ACC_FACTOR;
-				if (jump)	velocity.y -= maxVelocity.y * JUMP_FACTOR;
+				if (jump && isTouching(FlxObject.DOWN))
+					velocity.y -= maxVelocity.y * JUMP_FACTOR;
 				if (hook) {
 					var tempHookTo:FlxPoint = hookCallback(getMidpoint(), angleFacing);
 					if (tempHookTo != null) {
@@ -137,6 +135,7 @@ class Player extends FlxSprite
 			// Leave WALKING
 		} else if (state == HOOKING) {
 			// Leave HOOKING
+			hookPoint.set(0,0);
 		}
 
 		state = newState;
