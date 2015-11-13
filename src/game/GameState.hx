@@ -11,7 +11,7 @@ import flixel.addons.editors.tiled.TiledTileLayer;
 
 class GameState extends FlxState
 {
-	private var _tilemap:FlxTilemap;
+	public var _tilemap:FlxTilemap;
 	private var _player:Player;
 	private var _canvas:FlxSprite;
 
@@ -64,6 +64,7 @@ class GameState extends FlxState
 
 		{ // Update drawing api
 			_canvas.pixels.fillRect(_canvas.pixels.rect, 0);
+
 			if (_player.state == Player.HOOKING)
 				Reg.drawLine(_player.hookPoint.x, 
 				             _player.hookPoint.y,

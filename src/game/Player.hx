@@ -72,15 +72,20 @@ class Player extends FlxSprite
 				velocity.set();
 
 				if (up || down) {
-					var pullVelo:FlxVector = FlxVector.get();
-					pullVelo.copyFrom(hookTo);
-					pullVelo.subtractPoint(hookPoint);
-					pullVelo.normalize();
-					pullVelo.scale(CLIMB_SPEED * (up ? 1 : -1));
-					hookPoint.x += pullVelo.x;
-					hookPoint.y += pullVelo.y;
-					pullVelo.put();
+					if (!(down && isTouching(FlxObject.DOWN)) &&
+							!(up && isTouching(FlxObject.UP))) {
+						var pullVelo:FlxVector = FlxVector.get();
+						pullVelo.copyFrom(hookTo);
+						pullVelo.subtractPoint(hookPoint);
+						pullVelo.normalize();
+						pullVelo.scale(CLIMB_SPEED * (up ? 1 : -1));
+						hookPoint.x += pullVelo.x;
+						hookPoint.y += pullVelo.y;
+						pullVelo.put();
+					}
 				}
+				var oldX:Float = hookPoint.x;
+				var oldY:Float = hookPoint.y;
 
 				var angleBetween:Float = 
 					Math.atan2(hookTo.y - hookPoint.y, hookTo.x - hookPoint.x);
@@ -92,6 +97,11 @@ class Player extends FlxSprite
 
 				FlxVelocity.moveTowardsPoint(this, hookPoint, 0, 16);
 				hookDistance = hookTo.distanceTo(getMidpoint());
+				if (cast(FlxG.state, GameState)._tilemap.overlapsPoint(hookPoint)) {
+					angVelo = 0;
+					hookPoint.x = oldX;
+					hookPoint.y = oldY;
+				}
 				if (hookDistance <= width * 2) hookDistance = 0;
 			}
 		}
