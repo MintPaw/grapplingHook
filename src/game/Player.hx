@@ -16,6 +16,10 @@ class Player extends FlxSprite
 	private static inline var MAX_SPEED:Float = 400;
 	private static inline var MAX_FALL:Float = 600;
 	private static inline var HOOK_SPEED:Float = 400;
+
+	public static inline var IDLE:Int = 0;
+	public static inline var WALKING:Int = 1;
+	public static inline var HOOKING:Int = 2;
 	
 	public var hookCallback:Dynamic;
 
@@ -23,7 +27,9 @@ class Player extends FlxSprite
 	public var angVelo:Float = 0;
 	public var hookTo:FlxVector = new FlxVector();
 	public var hookDistance:Float = 0;
-	public var hookPoint:FlxPoint = new FlxPoint(-1, -1);
+	public var hookPoint:FlxPoint = new FlxPoint();
+
+	public var state:Int = IDLE;
 
 	public function new()
 	{
@@ -61,31 +67,36 @@ class Player extends FlxSprite
 		}
 
 		{ // Update hooking
-			if (hookDistance > 0) {
+			if (state == HOOKING) {
 				velocity.set();
 
 				if (hookDistance > 300) {
-					FlxVelocity.moveTowardsPoint(this, hookTo, HOOK_SPEED);
+					var pullVelo:FlxVector = FlxVector.get();
+					pullVelo.copyFrom(hookTo);
+					pullVelo.subtractPoint(hookPoint);
+					pullVelo.normalize();
+					pullVelo.scale(3);
+					hookPoint.x += pullVelo.x;
+					hookPoint.y += pullVelo.y;
 					angVelo = 0;
 				} else {
-					if (hookPoint.x == -1) hookPoint.copyFrom(getMidpoint());
-
 					var angleBetween:Float = 
 						Math.atan2(hookTo.y - hookPoint.y, hookTo.x - hookPoint.x);
 
 					angVelo += -1 * Math.cos(angleBetween);
 					angVelo *= .95;
 					hookPoint.rotate(hookTo, angVelo);
-					FlxVelocity.moveTowardsPoint(this, hookPoint, 0, 16);
 					//Reg.drawPoint(hookPoint.x, hookPoint.y, 0xFFFF0000);
 				}
 
+				FlxVelocity.moveTowardsPoint(this, hookPoint, 0, 16);
 				hookDistance = hookTo.distanceTo(getMidpoint());
+				if (hookDistance <= width * 2) hookDistance = 0;
 			}
 		}
 
 		{ // Update ground movement
-			if (hookDistance == 0) {
+			if (state == IDLE || state == WALKING) {
 				acceleration.x = 0;
 				acceleration.y = maxVelocity.y * GRAVITY_FACTOR;
 				if (left) acceleration.x -= maxVelocity.x * ACC_FACTOR;
@@ -94,16 +105,39 @@ class Player extends FlxSprite
 				if (hook) {
 					var tempHookTo:FlxPoint = hookCallback(getMidpoint(), angleFacing);
 					if (tempHookTo != null) {
-						velocity.set();
-						acceleration.set();
 						hookTo.x = tempHookTo.x;
 						hookTo.y = tempHookTo.y;
 						hookDistance = hookTo.distanceTo(getMidpoint());
+						hookPoint.copyFrom(getMidpoint());
+						switchState(HOOKING);
 					}
 				}
 			}
 		}
 
 		super.update(elapsed);
+	}
+
+	private function switchState(newState:Int):Void
+	{
+		if (state == IDLE) {
+			// Leave IDLE
+		} else if (state == WALKING) {
+			// Leave WALKING
+		} else if (state == HOOKING) {
+			// Leave HOOKING
+		}
+
+		state = newState;
+
+		if (state == IDLE) {
+			// Enter IDLE
+		} else if (state == WALKING) {
+			// Enter WALKING
+		} else if (state == HOOKING) {
+			// Enter HOOKING
+			velocity.set();
+			acceleration.set();
+		}
 	}
 }
