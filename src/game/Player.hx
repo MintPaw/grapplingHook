@@ -71,12 +71,12 @@ class Player extends FlxSprite
 			if (state == HOOKING) {
 				velocity.set();
 
-				if (hookDistance > 300) {
+				if (up || down) {
 					var pullVelo:FlxVector = FlxVector.get();
 					pullVelo.copyFrom(hookTo);
 					pullVelo.subtractPoint(hookPoint);
 					pullVelo.normalize();
-					pullVelo.scale(CLIMB_SPEED);
+					pullVelo.scale(CLIMB_SPEED * (up ? 1 : -1));
 					hookPoint.x += pullVelo.x;
 					hookPoint.y += pullVelo.y;
 					pullVelo.put();
