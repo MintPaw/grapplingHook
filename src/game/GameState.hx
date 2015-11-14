@@ -65,7 +65,7 @@ class GameState extends FlxState
 		{ // Update drawing api
 			_canvas.pixels.fillRect(_canvas.pixels.rect, 0);
 
-			if (_player.state == Player.HOOKING)
+			if (_player.state == Player.HOOKING || _player.state == Player.HANGING)
 				Reg.drawLine(_player.hookPoint.x, 
 						_player.hookPoint.y,
 						_player.hookTo.x,

@@ -103,9 +103,7 @@ class Player extends FlxSprite
 				FlxVelocity.moveTowardsPoint(this, hookPoint, 0, 16);
 				hookDistance = hookTo.distanceTo(getMidpoint());
 				if (hookDistance <= width * 2) hookDistance = 0;
-				if (hittingMap) {
-					switchState(IDLE);
-				}
+				if (hittingMap)	switchState(IDLE);
 			}
 
 		}
@@ -142,7 +140,8 @@ class Player extends FlxSprite
 			// Leave WALKING
 		} else if (state == HOOKING) {
 			// Leave HOOKING
-			// hookPoint.set(0,0);
+		} else if (state == HANGING) {
+			// Leave HANGING
 		}
 
 		state = newState;
@@ -153,6 +152,10 @@ class Player extends FlxSprite
 			// Enter WALKING
 		} else if (state == HOOKING) {
 			// Enter HOOKING
+			velocity.set();
+			acceleration.set();
+		} else if (state == HANGING) {
+			// Enter HANGING
 			velocity.set();
 			acceleration.set();
 		}
