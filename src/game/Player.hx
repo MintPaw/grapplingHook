@@ -66,18 +66,20 @@ class Player extends FlxSprite
 			if (state == HOOKING) {
 				velocity.set();
 
-				if (up || down) {
-					if (!(down && isTouching(FlxObject.DOWN)) &&
-							!(up && isTouching(FlxObject.UP))) {
+				function pullHook(dir:Int):Void {
 						var pullVelo:FlxVector = FlxVector.get();
 						pullVelo.copyFrom(hookTo);
 						pullVelo.subtractPoint(hookPoint);
 						pullVelo.normalize();
-						pullVelo.scale(CLIMB_SPEED * (up ? 1 : -1));
+						pullVelo.scale(CLIMB_SPEED * dir);
 						hookPoint.x += pullVelo.x;
 						hookPoint.y += pullVelo.y;
 						pullVelo.put();
-					}
+				}
+
+				if (up || down) {
+					if (!(down && isTouching(FlxObject.DOWN)) &&
+							!(up && isTouching(FlxObject.UP))) pullHook(up ? 1 : -1);
 				}
 				var oldX:Float = hookPoint.x;
 				var oldY:Float = hookPoint.y;
@@ -85,18 +87,19 @@ class Player extends FlxSprite
 				var angleBetween:Float = 
 					Math.atan2(hookTo.y - hookPoint.y, hookTo.x - hookPoint.x);
 
-				angVelo += -1 * Math.cos(angleBetween);
+				angVelo += -0.5 * Math.cos(angleBetween);
 				angVelo *= .95;
 				hookPoint.rotate(hookTo, angVelo);
 				//Reg.drawPoint(hookPoint.x, hookPoint.y, 0xFFFF0000);
 
-				FlxVelocity.moveTowardsPoint(this, hookPoint, 0, 16);
-				hookDistance = hookTo.distanceTo(getMidpoint());
 				if (cast(FlxG.state, GameState)._tilemap.overlapsPoint(hookPoint)) {
 					angVelo = 0;
 					hookPoint.x = oldX;
 					hookPoint.y = oldY;
+					pullHook(10);
 				}
+				FlxVelocity.moveTowardsPoint(this, hookPoint, 0, 16);
+				hookDistance = hookTo.distanceTo(getMidpoint());
 				if (hookDistance <= width * 2) hookDistance = 0;
 
 				if (jump) switchState(IDLE);
