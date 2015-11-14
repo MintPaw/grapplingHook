@@ -18,7 +18,7 @@ if %opt%==1 (
 
 if %opt%==2 (
 	del bin\Windows\cpp\bin\*.exe /f /s /q
-	openfl build windows -debug
+	openfl build windows -debug -verbose
 	cd bin\Windows\cpp\bin
 	.\GrapplingHook.exe
 	cd ..\..\..\..\
