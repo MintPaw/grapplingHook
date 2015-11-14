@@ -59,7 +59,7 @@ class GameState extends FlxState
 		super.update(elapsed);
 
 		{ // Update collision
-			FlxG.collide(_tilemap, _player);
+			_player.hittingMap = FlxG.collide(_tilemap, _player);
 		}
 
 		{ // Update drawing api

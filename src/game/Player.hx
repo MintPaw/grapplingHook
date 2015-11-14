@@ -24,6 +24,7 @@ class Player extends FlxSprite
 	public static inline var HANGING:Int = 3;
 	
 	public var hookCallback:Dynamic;
+	public var hittingMap:Bool = false;
 
 	public var angleFacing:Float = 0;
 	public var angVelo:Float = 0;
@@ -75,44 +76,38 @@ class Player extends FlxSprite
 				pullVelo.put();
 			}
 
-			{ // Update hooking
-				if (state == HOOKING) {
-					pullHook(5);
-					if (jump) switchState(HANGING);
-				} else if (state == HANGING) {
-					velocity.set();
+			if (state == HOOKING) {
+				pullHook(5);
+				if (jump) switchState(HANGING);
 
-					if (up || down) {
-						if (!(down && isTouching(FlxObject.DOWN)) &&
-								!(up && isTouching(FlxObject.UP))) pullHook(up ? 1 : -1);
-					}
-					var oldX:Float = hookPoint.x;
-					var oldY:Float = hookPoint.y;
-
-					var angleBetween:Float = 
-						Math.atan2(hookTo.y - hookPoint.y, hookTo.x - hookPoint.x);
-
-					angVelo += -0.5 * Math.cos(angleBetween);
-					angVelo *= .95;
-					hookPoint.rotate(hookTo, angVelo);
-					//Reg.drawPoint(hookPoint.x, hookPoint.y, 0xFFFF0000);
-
-					if (cast(FlxG.state, GameState)._tilemap.overlapsPoint(hookPoint)) {
-						angVelo = 0;
-						hookPoint.x = oldX;
-						hookPoint.y = oldY;
-						pullHook(10);
-					}
-					if (jump) switchState(IDLE);
+			} else if (state == HANGING) {
+				if (up || down) {
+					if (!(down && isTouching(FlxObject.DOWN)) &&
+							!(up && isTouching(FlxObject.UP))) pullHook(up ? 1 : -1);
 				}
+				var oldX:Float = hookPoint.x;
+				var oldY:Float = hookPoint.y;
 
-				if (state == HOOKING || state == HANGING) {
-					FlxVelocity.moveTowardsPoint(this, hookPoint, 0, 16);
-					hookDistance = hookTo.distanceTo(getMidpoint());
-					if (hookDistance <= width * 2) hookDistance = 0;
-				}
+				var angleBetween:Float = 
+					Math.atan2(hookTo.y - hookPoint.y, hookTo.x - hookPoint.x);
 
+				angVelo += -0.5 * Math.cos(angleBetween);
+				angVelo *= .95;
+				hookPoint.rotate(hookTo, angVelo);
+				//Reg.drawPoint(hookPoint.x, hookPoint.y, 0xFFFF0000);
+
+				if (jump) switchState(IDLE);
 			}
+
+			if (state == HOOKING || state == HANGING) {
+				FlxVelocity.moveTowardsPoint(this, hookPoint, 0, 16);
+				hookDistance = hookTo.distanceTo(getMidpoint());
+				if (hookDistance <= width * 2) hookDistance = 0;
+				if (hittingMap) {
+					switchState(IDLE);
+				}
+			}
+
 		}
 
 		{ // Update ground movement
