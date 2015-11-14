@@ -93,8 +93,7 @@ class Player extends FlxSprite
 
 				angVelo += -0.5 * Math.cos(angleBetween);
 				angVelo *= .95;
-				trace(angVelo);
-				//angVelo = Math.min, 
+				angVelo = Math.min(3, Math.max(-3, angVelo));
 				hookPoint.rotate(hookTo, angVelo);
 				//Reg.drawPoint(hookPoint.x, hookPoint.y, 0xFFFF0000);
 
