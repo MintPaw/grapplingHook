@@ -67,10 +67,10 @@ class GameState extends FlxState
 
 			if (_player.state == Player.HOOKING)
 				Reg.drawLine(_player.hookPoint.x, 
-				             _player.hookPoint.y,
-										 _player.hookTo.x,
-										 _player.hookTo.y,
-										 0xFFFF0000);
+						_player.hookPoint.y,
+						_player.hookTo.x,
+						_player.hookTo.y,
+						0xFFFF0000);
 		}
 	}
 

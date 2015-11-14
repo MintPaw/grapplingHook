@@ -21,14 +21,15 @@ class Player extends FlxSprite
 	public static inline var IDLE:Int = 0;
 	public static inline var WALKING:Int = 1;
 	public static inline var HOOKING:Int = 2;
+	public static inline var HANGING:Int = 3;
 	
 	public var hookCallback:Dynamic;
 
 	public var angleFacing:Float = 0;
 	public var angVelo:Float = 0;
+	public var hookPoint:FlxPoint = new FlxPoint();
 	public var hookTo:FlxVector = new FlxVector();
 	public var hookDistance:Float = 0;
-	public var hookPoint:FlxPoint = new FlxPoint();
 
 	public var state:Int = IDLE;
 
@@ -56,53 +57,61 @@ class Player extends FlxSprite
 			if (FlxG.keys.pressed.RIGHT || FlxG.keys.pressed.D) right = true;
 			if (FlxG.keys.pressed.UP || FlxG.keys.pressed.W) up = true;
 			if (FlxG.keys.pressed.DOWN || FlxG.keys.pressed.S) down = true;
-			if (FlxG.keys.pressed.SPACE) jump = true;
+			if (FlxG.keys.justPressed.SPACE) jump = true;
 			if (FlxG.mouse.justPressed) hook = true;
 
 			angleFacing = FlxAngle.angleBetweenMouse(this, false);
 		}
 
-		{ // Update hooking
-			if (state == HOOKING) {
-				velocity.set();
+		{ // Update grappling
+			function pullHook(dir:Int):Void {
+				var pullVelo:FlxVector = FlxVector.get();
+				pullVelo.copyFrom(hookTo);
+				pullVelo.subtractPoint(hookPoint);
+				pullVelo.normalize();
+				pullVelo.scale(CLIMB_SPEED * dir);
+				hookPoint.x += pullVelo.x;
+				hookPoint.y += pullVelo.y;
+				pullVelo.put();
+			}
 
-				function pullHook(dir:Int):Void {
-						var pullVelo:FlxVector = FlxVector.get();
-						pullVelo.copyFrom(hookTo);
-						pullVelo.subtractPoint(hookPoint);
-						pullVelo.normalize();
-						pullVelo.scale(CLIMB_SPEED * dir);
-						hookPoint.x += pullVelo.x;
-						hookPoint.y += pullVelo.y;
-						pullVelo.put();
+			{ // Update hooking
+				if (state == HOOKING) {
+					pullHook(5);
+					if (jump) switchState(HANGING);
+				} else if (state == HANGING) {
+					velocity.set();
+
+					if (up || down) {
+						if (!(down && isTouching(FlxObject.DOWN)) &&
+								!(up && isTouching(FlxObject.UP))) pullHook(up ? 1 : -1);
+					}
+					var oldX:Float = hookPoint.x;
+					var oldY:Float = hookPoint.y;
+
+					var angleBetween:Float = 
+						Math.atan2(hookTo.y - hookPoint.y, hookTo.x - hookPoint.x);
+
+					angVelo += -0.5 * Math.cos(angleBetween);
+					angVelo *= .95;
+					hookPoint.rotate(hookTo, angVelo);
+					//Reg.drawPoint(hookPoint.x, hookPoint.y, 0xFFFF0000);
+
+					if (cast(FlxG.state, GameState)._tilemap.overlapsPoint(hookPoint)) {
+						angVelo = 0;
+						hookPoint.x = oldX;
+						hookPoint.y = oldY;
+						pullHook(10);
+					}
+					if (jump) switchState(IDLE);
 				}
 
-				if (up || down) {
-					if (!(down && isTouching(FlxObject.DOWN)) &&
-							!(up && isTouching(FlxObject.UP))) pullHook(up ? 1 : -1);
+				if (state == HOOKING || state == HANGING) {
+					FlxVelocity.moveTowardsPoint(this, hookPoint, 0, 16);
+					hookDistance = hookTo.distanceTo(getMidpoint());
+					if (hookDistance <= width * 2) hookDistance = 0;
 				}
-				var oldX:Float = hookPoint.x;
-				var oldY:Float = hookPoint.y;
 
-				var angleBetween:Float = 
-					Math.atan2(hookTo.y - hookPoint.y, hookTo.x - hookPoint.x);
-
-				angVelo += -0.5 * Math.cos(angleBetween);
-				angVelo *= .95;
-				hookPoint.rotate(hookTo, angVelo);
-				//Reg.drawPoint(hookPoint.x, hookPoint.y, 0xFFFF0000);
-
-				if (cast(FlxG.state, GameState)._tilemap.overlapsPoint(hookPoint)) {
-					angVelo = 0;
-					hookPoint.x = oldX;
-					hookPoint.y = oldY;
-					pullHook(10);
-				}
-				FlxVelocity.moveTowardsPoint(this, hookPoint, 0, 16);
-				hookDistance = hookTo.distanceTo(getMidpoint());
-				if (hookDistance <= width * 2) hookDistance = 0;
-
-				if (jump) switchState(IDLE);
 			}
 		}
 
@@ -138,7 +147,7 @@ class Player extends FlxSprite
 			// Leave WALKING
 		} else if (state == HOOKING) {
 			// Leave HOOKING
-			hookPoint.set(0,0);
+			// hookPoint.set(0,0);
 		}
 
 		state = newState;
