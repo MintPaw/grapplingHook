@@ -1,8 +1,6 @@
 @echo off
 :start
 cd "%~dp0\.."
-echo.
-echo.
 echo win32 build system
 echo 1. reset/pull
 echo 2. build/run cpp
