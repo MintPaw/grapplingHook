@@ -81,12 +81,10 @@ class Player extends FlxSprite
 				if (jump) switchState(HANGING);
 
 			} else if (state == HANGING) {
-				if (up || down) {
-					if (!(down && isTouching(FlxObject.DOWN)) &&
-							!(up && isTouching(FlxObject.UP))) pullHook(up ? 1 : -1);
-				}
-				var oldX:Float = hookPoint.x;
-				var oldY:Float = hookPoint.y;
+				if (up && !isTouching(FlxObject.UP)) pullHook(1);
+				if (down && !isTouching(FlxObject.DOWN)) pullHook(-1);
+				if (left) angVelo += .1;
+				if (right) angVelo -= .1;
 
 				var angleBetween:Float = 
 					Math.atan2(hookTo.y - hookPoint.y, hookTo.x - hookPoint.x);
@@ -113,8 +111,10 @@ class Player extends FlxSprite
 			if (state == IDLE || state == WALKING) {
 				acceleration.x = 0;
 				acceleration.y = maxVelocity.y * GRAVITY_FACTOR;
-				if (left) acceleration.x -= maxVelocity.x * ACC_FACTOR;
-				if (right) acceleration.x += maxVelocity.x * ACC_FACTOR;
+				var speed:Float = maxVelocity.x * ACC_FACTOR;
+				//if (!isTouching(FlxObject.DOWN)) speed /= 2;
+				if (left) acceleration.x -= speed;
+				if (right) acceleration.x += speed;
 				if (jump && isTouching(FlxObject.DOWN))
 					velocity.y -= maxVelocity.y * JUMP_FACTOR;
 				if (hook) {
