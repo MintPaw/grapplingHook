@@ -3,16 +3,20 @@ package game;
 import flixel.FlxG;
 import flixel.FlxState;
 import flixel.FlxSprite;
+import flixel.group.FlxGroup;
 import flixel.math.FlxPoint;
 import flixel.tile.FlxTilemap;
 import flixel.util.FlxSpriteUtil;
 import flixel.addons.editors.tiled.TiledMap;
+import flixel.addons.editors.tiled.TiledLayer;
 import flixel.addons.editors.tiled.TiledTileLayer;
+import flixel.addons.editors.tiled.TiledObjectLayer;
 
 class GameState extends FlxState
 {
-	public var _tilemap:FlxTilemap;
+	private var _tilemap:FlxTilemap;
 	private var _player:Player;
+	private var _doors:FlxTypedGroup<Door>;
 	private var _canvas:FlxSprite;
 
 	public function new()
@@ -33,6 +37,22 @@ class GameState extends FlxState
 
 		{ // Setup tilemap
 			var tiledMap:TiledMap = new TiledMap("assets/map/test.tmx");
+			_doors = new FlxTypedGroup<Door>();
+
+			for (layer in tiledMap.layers) {
+				if (layer.type == TiledLayerType.OBJECT) {
+					for (obj in cast(layer, TiledObjectLayer).objects) {
+						if (obj.type == "door") {
+							var d:Door = new Door();
+							d.x = obj.x;
+							d.y = obj.y;
+							d.loc = obj.properties.get("loc");
+							d.exitTo = obj.properties.get("exitTo");
+							_doors.add(d);
+						}
+					}
+				}
+			}
 			
 			_tilemap = new FlxTilemap();
 			_tilemap.loadMapFromCSV(
@@ -42,7 +62,6 @@ class GameState extends FlxState
 					32,
 					null,
 					1);
-			add(_tilemap);
 		}
 
 		{ // Setup player
@@ -50,8 +69,11 @@ class GameState extends FlxState
 			_player.hookCallback = hook;
 			_player.x = 300;
 			_player.y = 200;
-			add(_player);
 		}
+
+		add(_tilemap);
+		add(_doors);
+		add(_player);
 	}
 
 	override public function update(elapsed:Float):Void

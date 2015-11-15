@@ -106,8 +106,6 @@ class Player extends FlxSprite
 
 		}
 
-		//trace(velocity + " " + acceleration);
-
 		{ // Update ground movement
 			if (state == IDLE || state == WALKING) {
 				if (swingVelo.y != 0) {

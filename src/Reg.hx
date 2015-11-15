@@ -6,6 +6,8 @@ import flixel.util.FlxSpriteUtil;
 class Reg
 {
 	public static var canvas:FlxSprite;
+	public static var prevLoc:String = "none";
+	public static var loc:String = "none";
 
 	public function new() {}
 
