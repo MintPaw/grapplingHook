@@ -31,7 +31,13 @@ class GameState extends FlxState
 	{
 		super.create();
 
-		{ // Setup shape
+		{ // Setup misc
+			FlxG.camera.fade(0xFF000000, 1, true, function() {
+				_player.freezeInput = false;
+			}, false);
+		}
+
+		{ // Setup canvas
 			_canvas = new FlxSprite();
 			_canvas.makeGraphic(FlxG.width, FlxG.height, 0);
 			add(_canvas);
