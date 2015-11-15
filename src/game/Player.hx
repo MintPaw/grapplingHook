@@ -32,6 +32,7 @@ class Player extends FlxSprite
 	public var hookTo:FlxVector = new FlxVector();
 	public var swingVelo:FlxVector = new FlxVector();
 
+	public var freezeInput:Bool = false;
 	public var left:Bool = false;
 	public var right:Bool = false;
 	public var up:Bool = false;

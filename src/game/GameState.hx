@@ -117,7 +117,7 @@ class GameState extends FlxState
 		var p:Player = cast(b2, Player);
 
 		if (p.up) {
-			//p.freeze();
+			p.freezeInput = true;
 			FlxG.camera.fade(0xFF000000, 1, false, function() {
 				Reg.prevLoc = Reg.loc;
 				Reg.loc = d.loc;
