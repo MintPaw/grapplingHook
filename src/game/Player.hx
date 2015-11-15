@@ -22,6 +22,7 @@ class Player extends FlxSprite
 	public static inline var WALKING:Int = 1;
 	public static inline var HOOKING:Int = 2;
 	public static inline var HANGING:Int = 3;
+	public static inline var WALLING:Int = 4;
 	
 	public var hookCallback:Dynamic;
 	public var hittingMap:Bool = false;
@@ -39,6 +40,8 @@ class Player extends FlxSprite
 	public var down:Bool = false;
 	public var jump:Bool = false;
 	public var hook:Bool = false;
+
+	public var onWall:Int = FlxObject.NONE;
 
 	public var state:Int = IDLE;
 
@@ -106,7 +109,8 @@ class Player extends FlxSprite
 			if (state == HOOKING || state == HANGING) {
 				FlxVelocity.moveTowardsPoint(this, hookPoint, 0, 16);
 				swingVelo.copyFrom(velocity);
-				if (hittingMap)	switchState(IDLE);
+				if (isTouching(FlxObject.DOWN)) switchState(IDLE);
+				if (isTouching(FlxObject.LEFT) || isTouching(FlxObject.RIGHT)) switchState(WALLING);
 			}
 
 		}
