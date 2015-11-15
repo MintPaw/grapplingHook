@@ -116,12 +116,14 @@ class GameState extends FlxState
 		var d:Door = cast(b1, Door);
 		var p:Player = cast(b2, Player);
 
-		//p.freeze();
-		FlxG.camera.fade(0xFF000000, 1, false, function() {
-			Reg.prevLoc = Reg.loc;
-			Reg.loc = d.loc;
-			FlxG.switchState(new GameState());
-		}, false);
+		if (p.up) {
+			//p.freeze();
+			FlxG.camera.fade(0xFF000000, 1, false, function() {
+				Reg.prevLoc = Reg.loc;
+				Reg.loc = d.loc;
+				FlxG.switchState(new GameState());
+			}, false);
+		}
 	}
 
 }
