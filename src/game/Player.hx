@@ -118,8 +118,6 @@ class Player extends FlxSprite
 				swingVelo.copyFrom(velocity);
 				if (isTouching(FlxObject.DOWN)) switchState(IDLE);
 				if (isTouching(FlxObject.UP)) switchState(HANGING);
-				if (isTouching(FlxObject.LEFT) || isTouching(FlxObject.RIGHT))
-					switchState(WALLING);
 			}
 
 		}
@@ -162,6 +160,10 @@ class Player extends FlxSprite
 		}
 
 		{ // Update walling
+			if (isTouching(FlxObject.LEFT) || isTouching(FlxObject.RIGHT)
+					&& !isTouching(FlxObject.DOWN))
+				switchState(WALLING);
+
 			if (state == WALLING) {
 				var wallOnScale:Int = 0;
 				if (wallOn == FlxObject.LEFT) wallOnScale = 1;
