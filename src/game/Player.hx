@@ -32,6 +32,13 @@ class Player extends FlxSprite
 	public var hookTo:FlxVector = new FlxVector();
 	public var swingVelo:FlxVector = new FlxVector();
 
+	public var left:Bool = false;
+	public var right:Bool = false;
+	public var up:Bool = false;
+	public var down:Bool = false;
+	public var jump:Bool = false;
+	public var hook:Bool = false;
+
 	public var state:Int = IDLE;
 
 	public function new()
@@ -46,12 +53,7 @@ class Player extends FlxSprite
 
 	override public function update(elapsed:Float):Void
 	{
-		var left:Bool = false;
-		var right:Bool = false;
-		var up:Bool = false;
-		var down:Bool = false;
-		var jump:Bool = false;
-		var hook:Bool = false;
+		left = right = up = down = jump = hook = false;
 
 		{ // Update inputs
 			if (FlxG.keys.pressed.LEFT || FlxG.keys.pressed.A) left = true;
