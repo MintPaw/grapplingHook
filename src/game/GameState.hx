@@ -3,6 +3,7 @@ package game;
 import flixel.FlxG;
 import flixel.FlxState;
 import flixel.FlxSprite;
+import flixel.FlxBasic;
 import flixel.group.FlxGroup;
 import flixel.math.FlxPoint;
 import flixel.tile.FlxTilemap;
@@ -82,6 +83,7 @@ class GameState extends FlxState
 
 		{ // Update collision
 			_player.hittingMap = FlxG.collide(_tilemap, _player);
+			FlxG.overlap(_doors, _player, doorVPlayer);
 		}
 
 		{ // Update drawing api
@@ -107,6 +109,19 @@ class GameState extends FlxState
 
 		if (bad) return null;
 		return result;
+	}
+
+	private function doorVPlayer(b1:FlxBasic, b2:FlxBasic):Void
+	{
+		var d:Door = cast(b1, Door);
+		var p:Player = cast(b2, Player);
+
+		//p.freeze();
+		FlxG.camera.fade(0xFF000000, 1, false, function() {
+			Reg.prevLoc = Reg.loc;
+			Reg.loc = d.loc;
+			FlxG.switchState(new GameState());
+		}, false);
 	}
 
 }
