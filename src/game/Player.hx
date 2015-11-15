@@ -57,12 +57,14 @@ class Player extends FlxSprite
 		left = right = up = down = jump = hook = false;
 
 		{ // Update inputs
-			if (FlxG.keys.pressed.LEFT || FlxG.keys.pressed.A) left = true;
-			if (FlxG.keys.pressed.RIGHT || FlxG.keys.pressed.D) right = true;
-			if (FlxG.keys.pressed.UP || FlxG.keys.pressed.W) up = true;
-			if (FlxG.keys.pressed.DOWN || FlxG.keys.pressed.S) down = true;
-			if (FlxG.keys.justPressed.SPACE) jump = true;
-			if (FlxG.mouse.justPressed) hook = true;
+			if (!freezeInput) {
+				if (FlxG.keys.pressed.LEFT || FlxG.keys.pressed.A) left = true;
+				if (FlxG.keys.pressed.RIGHT || FlxG.keys.pressed.D) right = true;
+				if (FlxG.keys.pressed.UP || FlxG.keys.pressed.W) up = true;
+				if (FlxG.keys.pressed.DOWN || FlxG.keys.pressed.S) down = true;
+				if (FlxG.keys.justPressed.SPACE) jump = true;
+				if (FlxG.mouse.justPressed) hook = true;
+			}
 
 			angleFacing = FlxAngle.angleBetweenMouse(this, false);
 		}
