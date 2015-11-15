@@ -17,6 +17,9 @@ class Player extends FlxSprite
 	private static inline var MAX_FALL:Float = 600;
 	private static inline var HOOK_SPEED:Float = 400;
 	private static inline var CLIMB_SPEED:Float = 3;
+	private static inline var WALL_JUMP_SPEED:Float = 400;
+	private static inline var WALL_FALL_SPEED:Float = 50;
+	private static inline var WALL_JUMP_HEIGHT:Float = 100;
 
 	public static inline var IDLE:Int = 0;
 	public static inline var WALKING:Int = 1;
@@ -41,7 +44,7 @@ class Player extends FlxSprite
 	public var jump:Bool = false;
 	public var hook:Bool = false;
 
-	public var onWall:Int = FlxObject.NONE;
+	public var wallOn:Int = FlxObject.NONE;
 
 	public var state:Int = IDLE;
 
@@ -73,6 +76,7 @@ class Player extends FlxSprite
 		}
 
 		{ // Update grappling
+			// Pull funciton
 			function pullHook(dir:Int):Void {
 				var pullVelo:FlxVector = FlxVector.get();
 				pullVelo.copyFrom(hookTo);
@@ -84,10 +88,12 @@ class Player extends FlxSprite
 				pullVelo.put();
 			}
 
+			// Hooking
 			if (state == HOOKING) {
 				pullHook(5);
 				if (jump) switchState(HANGING);
 
+			// Hanging
 			} else if (state == HANGING) {
 				if (up && !isTouching(FlxObject.UP)) pullHook(1);
 				if (down && !isTouching(FlxObject.DOWN)) pullHook(-1);
@@ -106,6 +112,7 @@ class Player extends FlxSprite
 				if (jump) switchState(IDLE);
 			}
 
+			// General hook logic
 			if (state == HOOKING || state == HANGING) {
 				FlxVelocity.moveTowardsPoint(this, hookPoint, 0, 16);
 				swingVelo.copyFrom(velocity);
@@ -143,12 +150,34 @@ class Player extends FlxSprite
 				// Hooking
 				if (hook) {
 					var tempHookTo:FlxPoint = hookCallback(getMidpoint(), angleFacing);
+					// TODO(jeru): Do you need a temp?
 					if (tempHookTo != null) {
 						hookTo.x = tempHookTo.x;
 						hookTo.y = tempHookTo.y;
 						hookPoint.copyFrom(getMidpoint());
 						switchState(HOOKING);
 					}
+				}
+			}
+		}
+
+		{ // Update walling
+			if (state == WALLING) {
+				var wallOnScale:Int = 0;
+				if (wallOn == FlxObject.LEFT) wallOnScale = 1;
+				if (wallOn == FlxObject.RIGHT) wallOnScale = -1;
+
+				if (jump) {
+					swingVelo.y = -WALL_JUMP_HEIGHT;
+					swingVelo.x = WALL_JUMP_SPEED * wallOnScale;
+					switchState(IDLE);
+				}
+
+				if ((wallOn == FlxObject.LEFT && right)
+						|| (wallOn == FlxObject.RIGHT && left)) {
+					swingVelo.y = -WALL_JUMP_HEIGHT;
+					swingVelo.x = WALL_FALL_SPEED * wallOnScale;
+					switchState(IDLE);
 				}
 			}
 		}
@@ -168,6 +197,7 @@ class Player extends FlxSprite
 			// Leave HANGING
 		} else if (state == WALLING) {
 			// Leave WALLING
+			wallOn = FlxObject.NONE;
 		}
 
 		state = newState;
@@ -186,8 +216,11 @@ class Player extends FlxSprite
 			acceleration.set();
 		} else if (state == WALLING) {
 			// Enter WALLING
+			if (isTouching(FlxObject.LEFT)) wallOn = FlxObject.LEFT;
+			if (isTouching(FlxObject.RIGHT)) wallOn = FlxObject.RIGHT;
 			velocity.set();
 			acceleration.set();
+			swingVelo.set();
 		}
 	}
 }
