@@ -37,7 +37,7 @@ class GameState extends FlxState
 		}
 
 		{ // Setup tilemap
-			var tiledMap:TiledMap = new TiledMap("assets/map/test.tmx");
+			var tiledMap:TiledMap = new TiledMap("assets/map/" + Reg.loc + ".tmx");
 			_doors = new FlxTypedGroup<Door>();
 
 			for (layer in tiledMap.layers) {
