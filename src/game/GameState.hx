@@ -5,6 +5,7 @@ import flixel.FlxState;
 import flixel.FlxSprite;
 import flixel.FlxBasic;
 import flixel.FlxObject;
+import flixel.FlxCamera;
 import flixel.group.FlxGroup;
 import flixel.math.FlxPoint;
 import flixel.tile.FlxTilemap;
@@ -32,16 +33,6 @@ class GameState extends FlxState
 		super.create();
 
 		{ // Setup misc
-			FlxG.camera.fade(0xFF000000, 1, true, function() {
-				_player.freezeInput = false;
-			}, false);
-		}
-
-		{ // Setup canvas
-			_canvas = new FlxSprite();
-			_canvas.makeGraphic(FlxG.width, FlxG.height, 0);
-			add(_canvas);
-			Reg.canvas = _canvas;
 		}
 
 		{ // Setup tilemap
@@ -84,6 +75,31 @@ class GameState extends FlxState
 					if (d.exitTo == "right") _player.facing = FlxObject.RIGHT;
 				}
 			}
+		}
+
+		{ // Setup camera
+			var tileWidth = 32;
+
+			FlxG.camera.fade(0xFF000000, 1, true, function() {
+				_player.freezeInput = false;
+			}, false);
+
+			FlxG.camera.setScrollBoundsRect(
+					0,
+					0,
+					_tilemap.width - tileWidth,
+					_tilemap.height, true);
+
+			FlxG.camera.follow(_player, FlxCameraFollowStyle.PLATFORMER);
+		}
+
+		{ // Setup canvas
+			_canvas = new FlxSprite();
+			_canvas.makeGraphic(
+					Std.int(FlxG.worldBounds.width),
+					Std.int(FlxG.worldBounds.height), 0);
+			add(_canvas);
+			Reg.canvas = _canvas;
 		}
 
 		add(_tilemap);
