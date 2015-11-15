@@ -100,7 +100,7 @@ class Player extends FlxSprite
 
 			if (state == HOOKING || state == HANGING) {
 				FlxVelocity.moveTowardsPoint(this, hookPoint, 0, 16);
-				//swingVelo.copyFrom(velocity);
+				swingVelo.copyFrom(velocity);
 				if (hittingMap)	switchState(IDLE);
 			}
 
@@ -110,6 +110,14 @@ class Player extends FlxSprite
 
 		{ // Update ground movement
 			if (state == IDLE || state == WALKING) {
+				if (swingVelo.y != 0) {
+					velocity.y = swingVelo.y;
+					swingVelo.y = 0;
+				}
+				if (swingVelo.x != 0) {
+					velocity.x = swingVelo.x;
+					if (hittingMap) swingVelo.set();
+				}
 				acceleration.y = maxVelocity.y * GRAVITY_FACTOR;
 				var speed:Float = maxVelocity.x * ACC_FACTOR;
 				if (isTouching(FlxObject.DOWN)) acceleration.x = 0 else speed = 0;
