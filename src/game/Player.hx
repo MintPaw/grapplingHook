@@ -110,13 +110,16 @@ class Player extends FlxSprite
 				FlxVelocity.moveTowardsPoint(this, hookPoint, 0, 16);
 				swingVelo.copyFrom(velocity);
 				if (isTouching(FlxObject.DOWN)) switchState(IDLE);
-				if (isTouching(FlxObject.LEFT) || isTouching(FlxObject.RIGHT) || isTouching(FlxObject.UP)) switchState(IDLE);
+				if (isTouching(FlxObject.UP)) switchState(HANGING);
+				if (isTouching(FlxObject.LEFT) || isTouching(FlxObject.RIGHT))
+					switchState(WALLING);
 			}
 
 		}
 
 		{ // Update ground movement
 			if (state == IDLE || state == WALKING) {
+				// Conserve swinging
 				if (swingVelo.y != 0) {
 					velocity.y = swingVelo.y;
 					swingVelo.y = 0;
@@ -125,14 +128,19 @@ class Player extends FlxSprite
 					velocity.x = swingVelo.x;
 					if (hittingMap) swingVelo.set();
 				}
+
+				// Gravity and air movement
 				acceleration.y = maxVelocity.y * GRAVITY_FACTOR;
 				var speed:Float = maxVelocity.x * ACC_FACTOR;
 				if (isTouching(FlxObject.DOWN)) acceleration.x = 0 else speed = 0;
 
+				// Basic movement
 				if (left) acceleration.x -= speed;
 				if (right) acceleration.x += speed;
 				if (jump && isTouching(FlxObject.DOWN))
 					velocity.y -= maxVelocity.y * JUMP_FACTOR;
+
+				// Hooking
 				if (hook) {
 					var tempHookTo:FlxPoint = hookCallback(getMidpoint(), angleFacing);
 					if (tempHookTo != null) {
@@ -158,6 +166,8 @@ class Player extends FlxSprite
 			// Leave HOOKING
 		} else if (state == HANGING) {
 			// Leave HANGING
+		} else if (state == WALLING) {
+			// Leave WALLING
 		}
 
 		state = newState;
@@ -172,6 +182,10 @@ class Player extends FlxSprite
 			acceleration.set();
 		} else if (state == HANGING) {
 			// Enter HANGING
+			velocity.set();
+			acceleration.set();
+		} else if (state == WALLING) {
+			// Enter WALLING
 			velocity.set();
 			acceleration.set();
 		}
