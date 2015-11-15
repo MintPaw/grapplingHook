@@ -4,10 +4,12 @@ import flixel.FlxG;
 import flixel.FlxState;
 import flixel.FlxSprite;
 import flixel.FlxBasic;
+import flixel.FlxObject;
 import flixel.group.FlxGroup;
 import flixel.math.FlxPoint;
 import flixel.tile.FlxTilemap;
 import flixel.util.FlxSpriteUtil;
+import flixel.tweens.FlxTween;
 import flixel.addons.editors.tiled.TiledMap;
 import flixel.addons.editors.tiled.TiledLayer;
 import flixel.addons.editors.tiled.TiledTileLayer;
@@ -68,8 +70,14 @@ class GameState extends FlxState
 		{ // Setup player
 			_player = new Player();
 			_player.hookCallback = hook;
-			_player.x = 300;
-			_player.y = 200;
+			for (d in _doors) {
+				if (d.loc == Reg.prevLoc) {
+					_player.x = d.x;
+					_player.y = d.y;
+					if (d.exitTo == "left") _player.facing = FlxObject.LEFT;
+					if (d.exitTo == "right") _player.facing = FlxObject.RIGHT;
+				}
+			}
 		}
 
 		add(_tilemap);
