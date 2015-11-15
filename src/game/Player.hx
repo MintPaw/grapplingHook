@@ -148,7 +148,6 @@ class Player extends FlxSprite
 				// Hooking
 				if (hook) {
 					var tempHookTo:FlxPoint = hookCallback(getMidpoint(), angleFacing);
-					// TODO(jeru): Do you need a temp?
 					if (tempHookTo != null) {
 						hookTo.x = tempHookTo.x;
 						hookTo.y = tempHookTo.y;
