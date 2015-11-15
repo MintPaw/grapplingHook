@@ -110,7 +110,7 @@ class Player extends FlxSprite
 				FlxVelocity.moveTowardsPoint(this, hookPoint, 0, 16);
 				swingVelo.copyFrom(velocity);
 				if (isTouching(FlxObject.DOWN)) switchState(IDLE);
-				if (isTouching(FlxObject.LEFT) || isTouching(FlxObject.RIGHT)) switchState(WALLING);
+				if (isTouching(FlxObject.LEFT) || isTouching(FlxObject.RIGHT) || isTouching(FlxObject.UP)) switchState(IDLE);
 			}
 
 		}
