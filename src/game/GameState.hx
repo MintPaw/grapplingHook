@@ -8,9 +8,9 @@ import flixel.FlxObject;
 import flixel.FlxCamera;
 import flixel.group.FlxGroup;
 import flixel.math.FlxPoint;
-import flixel.tile.FlxTilemap;
 import flixel.util.FlxSpriteUtil;
 import flixel.tweens.FlxTween;
+import flixel.addons.tile.FlxTilemapExt;
 import flixel.addons.editors.tiled.TiledMap;
 import flixel.addons.editors.tiled.TiledLayer;
 import flixel.addons.editors.tiled.TiledTileLayer;
@@ -18,7 +18,7 @@ import flixel.addons.editors.tiled.TiledObjectLayer;
 
 class GameState extends FlxState
 {
-	private var _tilemap:FlxTilemap;
+	private var _tilemap:FlxTilemapExt;
 	private var _player:Player;
 	private var _doors:FlxTypedGroup<Door>;
 	private var _canvas:FlxSprite;
@@ -54,7 +54,7 @@ class GameState extends FlxState
 				}
 			}
 			
-			_tilemap = new FlxTilemap();
+			_tilemap = new FlxTilemapExt();
 			_tilemap.loadMapFromCSV(
 					cast(tiledMap.layers[0], TiledTileLayer).csvData,
 					"assets/" + tiledMap.tilesetArray[0].imageSource.substr(3),
