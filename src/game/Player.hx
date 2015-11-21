@@ -117,6 +117,16 @@ class Player extends FlxSprite
 			if (state == CAMERAING) {
 				shutter.x = FlxG.mouse.x - shutter.width / 2;
 				shutter.y = FlxG.mouse.y - shutter.height / 2;
+				if (justUp && shutter.scale.x < 2)
+				{
+					shutter.scale.x += 0.1;
+					shutter.scale.y += 0.1;
+				}
+				if (justDown && shutter.scale.x > 0.5)
+				{
+					shutter.scale.x -= 0.1;
+					shutter.scale.y -= 0.1;
+				}
 			}
 		}
 
