@@ -50,6 +50,10 @@ class Player extends FlxSprite
 	public var right:Bool = false;
 	public var up:Bool = false;
 	public var down:Bool = false;
+	public var justLeft:Bool = false;
+	public var justRight:Bool = false;
+	public var justUp:Bool = false;
+	public var justDown:Bool = false;
 	public var jump:Bool = false;
 	public var hook:Bool = false;
 	public var angleFacing:Float = 0;
@@ -75,7 +79,8 @@ class Player extends FlxSprite
 
 	override public function update(elapsed:Float):Void
 	{
-		wep1 = wep2 = left = right = up = down = jump = hook = false;
+		wep1 = wep2 = left = right = up = down = jump = hook = justLeft =
+			justRight = justUp = justDown = false;
 
 		{ // Update inputs
 			if (!freezeInput) {
@@ -83,6 +88,16 @@ class Player extends FlxSprite
 				if (FlxG.keys.pressed.RIGHT || FlxG.keys.pressed.D) right = true;
 				if (FlxG.keys.pressed.UP || FlxG.keys.pressed.W) up = true;
 				if (FlxG.keys.pressed.DOWN || FlxG.keys.pressed.S) down = true;
+
+				if (FlxG.keys.justPressed.LEFT || FlxG.keys.justPressed.A)
+					justLeft = true;
+				if (FlxG.keys.justPressed.RIGHT || FlxG.keys.justPressed.D)
+					justRight = true;
+				if (FlxG.keys.justPressed.UP || FlxG.keys.justPressed.W)
+					justUp = true;
+				if (FlxG.keys.justPressed.DOWN || FlxG.keys.justPressed.S)
+					justDown = true;
+
 				if (FlxG.keys.pressed.ONE) wep1 = true;
 				if (FlxG.keys.pressed.TWO) wep2 = true;
 				if (FlxG.keys.justPressed.SPACE) jump = true;
@@ -96,6 +111,13 @@ class Player extends FlxSprite
 			var toCameraing:Array<Int> = [IDLE, WALKING, HANGING, WALLING];
 			if (wep2 && toCameraing.indexOf(state) != -1) switchState(CAMERAING);
 			if (wep1 && state == CAMERAING) switchState(IDLE);
+		}
+
+		{ // Update camera
+			if (state == CAMERAING) {
+				shutter.x = FlxG.mouse.x - shutter.width / 2;
+				shutter.y = FlxG.mouse.y - shutter.height / 2;
+			}
 		}
 
 		{ // Update grappling
