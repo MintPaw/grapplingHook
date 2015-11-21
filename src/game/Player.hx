@@ -10,6 +10,7 @@ import flixel.math.FlxPoint;
 
 class Player extends FlxSprite
 {
+	// Const
 	private static inline var ACC_FACTOR:Int = 8;
 	private static inline var JUMP_FACTOR:Float = 0.75;
 	private static inline var GRAVITY_FACTOR:Float = 2;
@@ -21,32 +22,39 @@ class Player extends FlxSprite
 	private static inline var WALL_FALL_SPEED:Float = 50;
 	private static inline var WALL_JUMP_HEIGHT:Float = 100;
 
+	// States
 	public static inline var IDLE:Int = 0;
 	public static inline var WALKING:Int = 1;
 	public static inline var HOOKING:Int = 2;
 	public static inline var HANGING:Int = 3;
 	public static inline var WALLING:Int = 4;
+	public static inline var CAMERAING:Int = 5;
+	public var state:Int = IDLE;
 	
+	// Parent set
 	public var hookCallback:Dynamic;
 	public var hittingMap:Bool = false;
 
-	public var angleFacing:Float = 0;
+	// Hook
 	public var angVelo:Float = 0;
 	public var hookPoint:FlxPoint = new FlxPoint();
 	public var hookTo:FlxVector = new FlxVector();
 	public var swingVelo:FlxVector = new FlxVector();
 
+	// Input
 	public var freezeInput:Bool = false;
+	public var wep1:Bool = false;
+	public var wep2:Bool = false;
 	public var left:Bool = false;
 	public var right:Bool = false;
 	public var up:Bool = false;
 	public var down:Bool = false;
 	public var jump:Bool = false;
 	public var hook:Bool = false;
+	public var angleFacing:Float = 0;
 
+	// Walling
 	public var wallOn:Int = FlxObject.NONE;
-
-	public var state:Int = IDLE;
 
 	public function new()
 	{
@@ -60,7 +68,7 @@ class Player extends FlxSprite
 
 	override public function update(elapsed:Float):Void
 	{
-		left = right = up = down = jump = hook = false;
+		wep1 = wep2 = left = right = up = down = jump = hook = false;
 
 		{ // Update inputs
 			if (!freezeInput) {
@@ -68,11 +76,19 @@ class Player extends FlxSprite
 				if (FlxG.keys.pressed.RIGHT || FlxG.keys.pressed.D) right = true;
 				if (FlxG.keys.pressed.UP || FlxG.keys.pressed.W) up = true;
 				if (FlxG.keys.pressed.DOWN || FlxG.keys.pressed.S) down = true;
+				if (FlxG.keys.pressed.ONE) wep1 = true;
+				if (FlxG.keys.pressed.TWO) wep2 = true;
 				if (FlxG.keys.justPressed.SPACE) jump = true;
 				if (FlxG.mouse.justPressed) hook = true;
 			}
 
 			angleFacing = FlxAngle.angleBetweenMouse(this, false);
+		}
+
+		{ // Update weapon
+			var toCameraing:Array<Int> = [IDLE, WALKING, HANGING, WALLING];
+			if (wep2 && toCameraing.indexOf(state) != -1) switchState(CAMERAING);
+			if (wep1 && state == CAMERAING) switchState(IDLE);
 		}
 
 		{ // Update grappling
