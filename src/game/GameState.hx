@@ -153,7 +153,8 @@ class GameState extends FlxState
 		var d:Door = cast(b1, Door);
 		var p:Player = cast(b2, Player);
 
-		if (p.up) {
+		var doorStates:Array<Int> = [Player.IDLE, Player.WALKING];
+		if (p.up && doorStates.indexOf(p.state) != -1) {
 			p.freezeInput = true;
 			FlxG.camera.fade(0xFF000000, 1, false, function() {
 				Reg.prevLoc = Reg.loc;
