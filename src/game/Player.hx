@@ -7,6 +7,7 @@ import flixel.math.FlxAngle;
 import flixel.math.FlxVelocity;
 import flixel.math.FlxVector;
 import flixel.math.FlxPoint;
+import flixel.tweens.FlxTween;
 
 class Player extends FlxSprite
 {
@@ -56,6 +57,9 @@ class Player extends FlxSprite
 	// Walling
 	public var wallOn:Int = FlxObject.NONE;
 
+	// Camera
+	public var shutter:FlxSprite;
+
 	public function new()
 	{
 		super();
@@ -63,6 +67,9 @@ class Player extends FlxSprite
 		maxVelocity.set(MAX_SPEED, MAX_FALL);
 		drag.x = maxVelocity.x * 4;
 		
+		shutter = new FlxSprite();
+		shutter.visible = false;
+
 		makeGraphic(30, 30, 0xFF000055);
 	}
 
@@ -215,6 +222,10 @@ class Player extends FlxSprite
 		} else if (state == WALLING) {
 			// Leave WALLING
 			wallOn = FlxObject.NONE;
+		} else if (state == CAMERAING) {
+			// Leave CAMERAING
+			shutter.visible = false;
+			FlxTween.tween(Reg.fader, { alpha: 0 }, 1);
 		}
 
 		state = newState;
@@ -238,6 +249,12 @@ class Player extends FlxSprite
 			velocity.set();
 			acceleration.set();
 			swingVelo.set();
+		} else if (state == CAMERAING) {
+			// Enter CAMERAING
+			Reg.fader.alpha = 0;
+			Reg.fader.color = 0xFF000000;
+			FlxTween.tween(Reg.fader, { alpha: .5 }, 1);
+			shutter.visible = true;
 		}
 	}
 }

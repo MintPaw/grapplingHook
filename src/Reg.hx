@@ -8,6 +8,7 @@ class Reg
 	public static var canvas:FlxSprite;
 	public static var prevLoc:String = "test0";
 	public static var loc:String = "none";
+	public static var fader:FlxSprite;
 
 	public function new() {}
 

@@ -22,6 +22,7 @@ class GameState extends FlxState
 	private var _player:Player;
 	private var _doors:FlxTypedGroup<Door>;
 	private var _canvas:FlxSprite;
+	private var _fader:FlxSprite;
 
 	public function new()
 	{
@@ -33,6 +34,10 @@ class GameState extends FlxState
 		super.create();
 
 		{ // Setup misc
+			_fader = new FlxSprite();
+			_fader.makeGraphic(FlxG.width, FlxG.height, 0xFFFFFFFF);
+			_fader.alpha = 0;
+			Reg.fader = _fader;
 		}
 
 		{ // Setup tilemap
@@ -105,6 +110,8 @@ class GameState extends FlxState
 		add(_tilemap);
 		add(_doors);
 		add(_player);
+		add(_fader);
+		add(_player.shutter);
 	}
 
 	override public function update(elapsed:Float):Void
