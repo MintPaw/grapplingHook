@@ -75,6 +75,7 @@ class Player extends FlxSprite
 		drag.x = maxVelocity.x * 4;
 		
 		shutter = new FlxSprite();
+		shutter.loadGraphic("assets/img/camerawork.png");
 		shutter.visible = false;
 
 		makeGraphic(30, 30, 0xFF000055);

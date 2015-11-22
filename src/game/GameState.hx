@@ -95,8 +95,9 @@ class GameState extends FlxState
 			FlxG.camera.setScrollBoundsRect(
 					0,
 					0,
-					_tilemap.width - tileWidth,
-					_tilemap.height, true);
+					Math.max(_tilemap.width - tileWidth, FlxG.width),
+					Math.max(_tilemap.height, FlxG.height),
+					true);
 
 			FlxG.camera.follow(_player, FlxCameraFollowStyle.PLATFORMER);
 		}
@@ -155,7 +156,7 @@ class GameState extends FlxState
 	{
 		FlxScreenGrab.defineCaptureRegion(
 				Std.int(_player.shutter.x),
-				Std.int(_player.shutter.y + _player.shutter.height),
+				Std.int(_player.shutter.y),
 				Std.int(_player.shutter.width * _player.shutter.scale.x),
 				Std.int(_player.shutter.height * _player.shutter.scale.y));
 
