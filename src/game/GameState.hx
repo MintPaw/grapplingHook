@@ -15,6 +15,8 @@ import flixel.addons.editors.tiled.TiledMap;
 import flixel.addons.editors.tiled.TiledLayer;
 import flixel.addons.editors.tiled.TiledTileLayer;
 import flixel.addons.editors.tiled.TiledObjectLayer;
+import flixel.addons.plugin.screengrab.FlxScreenGrab;
+
 
 class GameState extends FlxState
 {
@@ -72,6 +74,7 @@ class GameState extends FlxState
 		{ // Setup player
 			_player = new Player();
 			_player.hookCallback = hook;
+			_player.takePhotoCallback = takePhoto;
 			for (d in _doors) {
 				if (d.loc == Reg.prevLoc) {
 					_player.x = d.x;
@@ -146,6 +149,19 @@ class GameState extends FlxState
 
 		if (bad) return null;
 		return result;
+	}
+
+	private function takePhoto():Void
+	{
+		FlxScreenGrab.defineCaptureRegion(
+				Std.int(_player.shutter.x),
+				Std.int(_player.shutter.y + _player.shutter.height),
+				Std.int(_player.shutter.width * _player.shutter.scale.x),
+				Std.int(_player.shutter.height * _player.shutter.scale.y));
+
+		var p:FlxSprite = new FlxSprite();
+		p.loadGraphic(FlxScreenGrab.grab(null, null, true).bitmapData);
+		add(p);
 	}
 
 	private function doorVPlayer(b1:FlxBasic, b2:FlxBasic):Void

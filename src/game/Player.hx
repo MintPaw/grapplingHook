@@ -11,6 +11,8 @@ import flixel.tweens.FlxTween;
 
 class Player extends FlxSprite
 {
+	private var _needToTakePhoto:Bool = false;
+
 	// Const
 	private static inline var ACC_FACTOR:Int = 8;
 	private static inline var JUMP_FACTOR:Float = 0.75;
@@ -34,6 +36,7 @@ class Player extends FlxSprite
 	
 	// Parent set
 	public var hookCallback:Dynamic;
+	public var takePhotoCallback:Dynamic;
 	public var hittingMap:Bool = false;
 
 	// Hook
@@ -117,15 +120,24 @@ class Player extends FlxSprite
 			if (state == CAMERAING) {
 				shutter.x = FlxG.mouse.x - shutter.width / 2;
 				shutter.y = FlxG.mouse.y - shutter.height / 2;
-				if (justUp && shutter.scale.x < 2)
-				{
+				if (justUp && shutter.scale.x < 2) {
 					shutter.scale.x += 0.1;
 					shutter.scale.y += 0.1;
 				}
-				if (justDown && shutter.scale.x > 0.5)
-				{
+				if (justDown && shutter.scale.x > 0.5) {
 					shutter.scale.x -= 0.1;
 					shutter.scale.y -= 0.1;
+				}
+
+				if (_needToTakePhoto) {
+					_needToTakePhoto = false;
+					shutter.visible = true;
+					takePhotoCallback();
+				}
+
+				if (hook) {
+					_needToTakePhoto = true;
+					shutter.visible = false;
 				}
 			}
 		}
