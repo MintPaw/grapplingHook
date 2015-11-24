@@ -46,6 +46,33 @@ class GameState extends FlxState
 			var tiledMap:TiledMap = new TiledMap("assets/map/" + Reg.loc + ".tmx");
 			_doors = new FlxTypedGroup<Door>();
 
+			var floorLeft:Array<Int> = [59];
+			var floorRight:Array<Int> = [60];
+			var ceilLeft:Array<Int> = [55];
+			var ceilRight:Array<Int> = [54];
+
+			var floorLeftShallowBot:Array<Int> = [131];
+			var floorLeftShallowTop:Array<Int> = [132];
+			var floorRightShallowBot:Array<Int> = [130];
+			var floorRightShallowTop:Array<Int> = [129];
+
+			var floorLeftSteepBot:Array<Int> = [139];
+			var floorLeftSteepTop:Array<Int> = [134];
+			var floorRightSteepBot:Array<Int> = [138];
+			var floorRightSteepTop:Array<Int> = [140];
+
+			var ceilLeftSteepBot:Array<Int> = [115];
+			var ceilLeftSteepTop:Array<Int> = [113];
+			var ceilRightSteepBot:Array<Int> = [114];
+			var ceilRightSteepTop:Array<Int> = [112];
+
+			var ceilLeftShallowBot:Array<Int> = [108];
+			var ceilLeftShallowTop:Array<Int> = [109];
+			var ceilRightShallowBot:Array<Int> = [111];
+			var ceilRightShallowTop:Array<Int> = [109];
+
+			var clouds:Array<Int> = [4, 12, 20];
+
 			for (layer in tiledMap.layers) {
 				if (layer.type == TiledLayerType.OBJECT) {
 					for (obj in cast(layer, TiledObjectLayer).objects) {
@@ -62,6 +89,7 @@ class GameState extends FlxState
 			}
 			
 			_tilemap = new FlxTilemapExt();
+
 			_tilemap.loadMapFromCSV(
 					cast(tiledMap.layers[0], TiledTileLayer).csvData,
 					"assets/" + tiledMap.tilesetArray[0].imageSource.substr(3),
@@ -69,6 +97,63 @@ class GameState extends FlxState
 					32,
 					null,
 					1);
+
+		var tempFL:Array<Int> = [];
+		var tempFR:Array<Int> = [];
+		var tempCL:Array<Int> = [];
+		var tempCR:Array<Int> = [];
+		var tempSteepThick:Array<Int> = [];
+		var tempSteepThin:Array<Int> = [];
+		var tempShallowThick:Array<Int> = [];
+		var tempShallowThin:Array<Int> = [];
+
+		tempFL = tempFL.concat(floorLeft);
+		tempFL = tempFL.concat(floorLeftShallowTop);
+		tempFL = tempFL.concat(floorLeftShallowBot);
+		tempFL = tempFL.concat(floorLeftSteepTop);
+		tempFL = tempFL.concat(floorLeftSteepBot);
+
+		tempFR = tempFR.concat(floorRight);
+		tempFR = tempFR.concat(floorRightShallowTop);
+		tempFR = tempFR.concat(floorRightShallowBot);
+		tempFR = tempFR.concat(floorRightSteepTop);
+		tempFR = tempFR.concat(floorRightSteepBot);
+
+		tempCL = tempCL.concat(ceilLeft);
+		tempCL = tempCL.concat(ceilLeftShallowTop);
+		tempCL = tempCL.concat(ceilLeftShallowBot);
+		tempCL = tempCL.concat(ceilLeftSteepTop);
+		tempCL = tempCL.concat(ceilLeftSteepBot);
+
+		tempCR = tempCR.concat(ceilRight);
+		tempCR = tempCR.concat(ceilRightShallowTop);
+		tempCR = tempCR.concat(ceilRightShallowBot);
+		tempCR = tempCR.concat(ceilRightSteepTop);
+		tempCR = tempCR.concat(ceilRightSteepBot);
+
+		tempSteepThick = tempSteepThick = tempSteepThick.concat(ceilLeftSteepBot);
+		tempSteepThick = tempSteepThick = tempSteepThick.concat(ceilRightSteepBot);
+		tempSteepThick = tempSteepThick.concat(floorLeftSteepBot);
+		tempSteepThick = tempSteepThick.concat(floorRightSteepBot);
+
+		tempShallowThick = tempShallowThick.concat(ceilLeftShallowTop);
+		tempShallowThick = tempShallowThick.concat(ceilRightShallowTop);
+		tempShallowThick = tempShallowThick.concat(floorLeftShallowTop);
+		tempShallowThick = tempShallowThick.concat(floorRightShallowTop);
+
+		tempSteepThin = tempSteepThin.concat(floorLeftSteepTop);
+		tempSteepThin = tempSteepThin.concat(floorRightSteepTop);
+		tempSteepThin = tempSteepThin.concat(ceilLeftSteepTop);
+		tempSteepThin = tempSteepThin.concat(ceilRightSteepTop);
+
+		tempShallowThin = tempShallowThin.concat(ceilLeftShallowBot);
+		tempShallowThin = tempShallowThin.concat(ceilRightShallowBot);
+		tempShallowThin = tempShallowThin.concat(floorLeftShallowBot);
+		tempShallowThin = tempShallowThin.concat(floorRightShallowBot);
+
+		_tilemap.setSlopes(tempFL, tempFR, tempCL, tempCR);
+		_tilemap.setSteep(tempSteepThick, tempSteepThin);
+		_tilemap.setGentle(tempShallowThick, tempShallowThin);
 		}
 
 		{ // Setup player
