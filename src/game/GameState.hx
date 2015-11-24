@@ -7,6 +7,7 @@ import flixel.FlxBasic;
 import flixel.FlxObject;
 import flixel.FlxCamera;
 import flixel.group.FlxGroup;
+import flixel.group.FlxSpriteGroup;
 import flixel.math.FlxPoint;
 import flixel.util.FlxSpriteUtil;
 import flixel.tweens.FlxTween;
@@ -245,8 +246,10 @@ class GameState extends FlxState
 				Std.int(_player.shutter.width * _player.shutter.scale.x),
 				Std.int(_player.shutter.height * _player.shutter.scale.y));
 
-		var p:FlxSprite = new FlxSprite();
-		p.loadGraphic(FlxScreenGrab.grab(null, null, true).bitmapData);
+		Reg.photos.push(new Photo(FlxScreenGrab.grab(null, null, true).bitmapData));
+
+		var p:FlxSprite = Reg.photos[Reg.photos.length-1].getSprite();
+		//p.loadGraphic(Reg.photos[Reg.photos.length-1]);
 		add(p);
 	}
 
