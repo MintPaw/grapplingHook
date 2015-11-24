@@ -249,7 +249,8 @@ class GameState extends FlxState
 		Reg.photos.push(new Photo(FlxScreenGrab.grab(null, null, true).bitmapData));
 
 		var p:FlxSprite = Reg.photos[Reg.photos.length-1].getSprite();
-		//p.loadGraphic(Reg.photos[Reg.photos.length-1]);
+		p.x = FlxG.width / 2 - p.width / 2;
+		p.y = FlxG.height / 2 - p.height / 2;
 		add(p);
 	}
 
