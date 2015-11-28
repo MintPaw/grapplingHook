@@ -15,8 +15,7 @@ class MainState extends FlxState
 	override public function create():Void
 	{
 		super.create();
-		Reg.prevLoc = "test";
-		Reg.loc = "test2";
+		Reg.loc = "test";
 		FlxG.switchState(new GameState());
 	}
 }
