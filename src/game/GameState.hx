@@ -10,6 +10,7 @@ import flixel.group.FlxGroup;
 import flixel.group.FlxSpriteGroup;
 import flixel.math.FlxPoint;
 import flixel.util.FlxSpriteUtil;
+import flixel.util.FlxTimer;
 import flixel.tweens.FlxTween;
 import flixel.addons.tile.FlxTilemapExt;
 import flixel.addons.editors.tiled.TiledMap;
@@ -252,6 +253,18 @@ class GameState extends FlxState
 		p.x = FlxG.width / 2 - p.width / 2;
 		p.y = FlxG.height / 2 - p.height / 2;
 		add(p);
+
+		FlxMintNumTween.t(1, 0.1, 0.5, 
+				function (f:Float) { FlxG.timeScale=f; });
+
+		FlxMintNumTween.t(Reg.fader.alpha, 0, 0.5, 
+				function (f:Float) { Reg.fader.alpha=f; }, null, true);
+
+		FlxMintNumTween.t(1, 0, 0.5, 
+				function (f:Float) { p.alpha=f; }, {startDelay: 3}, true);
+
+		FlxMintNumTween.t(0.1, 1, 0.5, 
+				function (f:Float) { FlxG.timeScale=f; }, {startDelay:3.5}, true);
 	}
 
 	private function doorVPlayer(b1:FlxBasic, b2:FlxBasic):Void
