@@ -9,6 +9,7 @@ import flixel.FlxCamera;
 import flixel.group.FlxGroup;
 import flixel.group.FlxSpriteGroup;
 import flixel.math.FlxPoint;
+import flixel.math.FlxRect;
 import flixel.util.FlxSpriteUtil;
 import flixel.util.FlxTimer;
 import flixel.tweens.FlxTween;
@@ -251,13 +252,44 @@ class GameState extends FlxState
 
 	private function takePhoto():Void
 	{
-		FlxScreenGrab.defineCaptureRegion(
-				Std.int(_player.shutter.x),
-				Std.int(_player.shutter.y),
-				Std.int(_player.shutter.width * _player.shutter.scale.x),
-				Std.int(_player.shutter.height * _player.shutter.scale.y));
+		var p:Photo = new Photo();
 
-		Reg.photos.push(new Photo(FlxScreenGrab.grab(null, null, true).bitmapData));
+		var r:FlxRect = FlxRect.get(
+				_player.shutter.x,
+				_player.shutter.y,
+				_player.shutter.width * _player.shutter.scale.x,
+				_player.shutter.height * _player.shutter.scale.y);
+
+		var rCentre:FlxPoint = FlxPoint.get(r.x + r.width / 2, r.y + r.height / 2);
+
+		FlxScreenGrab.defineCaptureRegion(
+				Std.int(r.x),
+				Std.int(r.y),
+				Std.int(r.width),
+				Std.int(r.height));
+
+		var target:Target = null;
+		for (t in _targets) {
+			if (r.containsFlxPoint(t.getMidpoint())) {
+				if (target == null) {
+					target = t;
+					continue;
+				} else if (t.getMidpoint().distanceTo(rCentre)
+						< target.getMidpoint().distanceTo(rCentre)) target = t;
+			}
+		}
+
+		if (target != null) {
+			p.hitTarget = true;
+			p.targetCentre.x = target.getMidpoint().x - r.x;
+			p.targetCentre.y = target.getMidpoint().y - r.y;
+			p.centrePercent =
+				Math.round(target.getMidpoint().distanceTo(rCentre)
+				/ Math.sqrt(Math.pow(r.width/2,2) + Math.pow(r.height/2,2))*100);
+		}
+
+		p.data = FlxScreenGrab.grab(null, null, true).bitmapData;
+		Reg.photos.push(p);
 
 		var p:FlxSprite = Reg.photos[Reg.photos.length-1].getSprite();
 		p.x = FlxG.width / 2 - p.width / 2;
@@ -275,6 +307,9 @@ class GameState extends FlxState
 
 		FlxMintNumTween.t(0.1, 1, 0.5, 
 				function (f:Float) { FlxG.timeScale=f; }, {startDelay:3.5}, true);
+
+		r.put();
+		rCentre.put();
 	}
 
 	private function doorVPlayer(b1:FlxBasic, b2:FlxBasic):Void
