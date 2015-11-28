@@ -8,6 +8,8 @@ import openfl.display.BitmapData;
 class Photo
 {
 	public var data:BitmapData;
+	public var hitTarget:Bool = false;
+	public var targetCentre:FlxPoint = new FlxPoint();
 
 	public function new(d:BitmapData)
 	{

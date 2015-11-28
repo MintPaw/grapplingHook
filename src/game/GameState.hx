@@ -25,6 +25,7 @@ class GameState extends FlxState
 	private var _tilemap:FlxTilemapExt;
 	private var _player:Player;
 	private var _doors:FlxTypedGroup<Door>;
+	private var _targets:FlxTypedGroup<Target>;
 	private var _canvas:FlxSprite;
 	private var _fader:FlxSprite;
 
@@ -47,6 +48,7 @@ class GameState extends FlxState
 		{ // Setup tilemap
 			var tiledMap:TiledMap = new TiledMap("assets/map/" + Reg.loc + ".tmx");
 			_doors = new FlxTypedGroup<Door>();
+			_targets = new FlxTypedGroup<Target>();
 
 			var floorLeft:Array<Int> = [59];
 			var floorRight:Array<Int> = [60];
@@ -85,6 +87,13 @@ class GameState extends FlxState
 							d.loc = obj.properties.get("loc");
 							d.exitTo = obj.properties.get("exitTo");
 							_doors.add(d);
+						}
+
+						if (obj.type == "target") {
+							var t:Target = new Target(obj.type);
+							t.x = obj.x;
+							t.y = obj.y;
+							_targets.add(t);
 						}
 					}
 				}
@@ -194,15 +203,16 @@ class GameState extends FlxState
 			_canvas.makeGraphic(
 					Std.int(FlxG.worldBounds.width),
 					Std.int(FlxG.worldBounds.height), 0);
-			add(_canvas);
 			Reg.canvas = _canvas;
 		}
 
 		add(_tilemap);
 		add(_doors);
 		add(_player);
+		add(_targets);
 		add(_fader);
 		add(_player.shutter);
+		add(_canvas);
 	}
 
 	override public function update(elapsed:Float):Void
