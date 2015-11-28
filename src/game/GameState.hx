@@ -296,17 +296,27 @@ class GameState extends FlxState
 		p.y = FlxG.height / 2 - p.height / 2;
 		add(p);
 
+		_player.freezeInput = true;
+		//Slow time
 		FlxMintNumTween.t(1, 0.1, 0.5, 
-				function (f:Float) { FlxG.timeScale=f; });
+				function (f:Float) {FlxG.timeScale=f; });
 
-		FlxMintNumTween.t(Reg.fader.alpha, 0, 0.5, 
-				function (f:Float) { Reg.fader.alpha=f; }, null, true);
+		//More fader
+		FlxMintNumTween.t(Reg.fader.alpha, 0.75, 0.5, 
+				function (f:Float) {Reg.fader.alpha=f;}, null, true);
 
+		//Fade out image
 		FlxMintNumTween.t(1, 0, 0.5, 
-				function (f:Float) { p.alpha=f; }, {startDelay: 3}, true);
+				function (f:Float) {p.alpha=f;}, {startDelay: 3}, true);
 
+		//Fade out fader
+		FlxMintNumTween.t(Reg.fader.alpha, 0, 0.5, 
+				function (f:Float) {Reg.fader.alpha=f;}, {startDelay: 3}, true);
+
+		//Speed time back up
 		FlxMintNumTween.t(0.1, 1, 0.5, 
-				function (f:Float) { FlxG.timeScale=f; }, {startDelay:3.5}, true);
+				function (f:Float) {FlxG.timeScale=f;}, {startDelay:3.5, onComplete: 
+					function (f:FlxTween) {_player.freezeInput = false;}}, true);
 
 		r.put();
 		rCentre.put();
