@@ -132,12 +132,14 @@ class Player extends FlxSprite
 
 				if (_needToTakePhoto) {
 					_needToTakePhoto = false;
+					Reg.fader.visible = true;
 					shutter.visible = true;
 					takePhotoCallback();
 				}
 
 				if (hook) {
 					_needToTakePhoto = true;
+					Reg.fader.visible = false;
 					shutter.visible = false;
 				}
 			}

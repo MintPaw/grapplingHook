@@ -301,17 +301,9 @@ class GameState extends FlxState
 		FlxMintNumTween.t(1, 0.1, 0.5, 
 				function (f:Float) {FlxG.timeScale=f; });
 
-		//More fader
-		FlxMintNumTween.t(Reg.fader.alpha, 0.75, 0.5, 
-				function (f:Float) {Reg.fader.alpha=f;}, null, true);
-
 		//Fade out image
 		FlxMintNumTween.t(1, 0, 0.5, 
-				function (f:Float) {p.alpha=f;}, {startDelay: 3}, true);
-
-		//Fade out fader
-		FlxMintNumTween.t(Reg.fader.alpha, 0, 0.5, 
-				function (f:Float) {Reg.fader.alpha=f;}, {startDelay: 3}, true);
+				function (f:Float) {p.alpha=f;}, {startDelay:3}, true);
 
 		//Speed time back up
 		FlxMintNumTween.t(0.1, 1, 0.5, 
