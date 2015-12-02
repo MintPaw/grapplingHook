@@ -29,10 +29,6 @@ class Target extends FlxSprite
 	{
 		super();
 		this.type = type;
-
-		maxVelocity.set(WALK_SPEED / 5, 600);
-		drag.x = maxVelocity.x * 4;
-		acceleration.y = maxVelocity.y * 2;
 		
 		if (type == "test") makeGraphic(10, 10, 0xFF444400);
 		else
@@ -54,6 +50,10 @@ class Target extends FlxSprite
 			aiType = "graze";
 			switchState(G_STANDING_TO_WALK);
 		}
+
+		maxVelocity.set(WALK_SPEED / 5, 600);
+		drag.x = maxVelocity.x * 4;
+		acceleration.y = maxVelocity.y * 2;
 	}
 
 	override public function update(elapsed:Float):Void

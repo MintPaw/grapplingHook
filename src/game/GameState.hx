@@ -98,8 +98,8 @@ class GameState extends FlxState
 
 						if (obj.type == "target") {
 							var t:Target = new Target(obj.properties.get("targetType"));
-							t.x = Math.round(obj.x * tileWidth) / tileWidth + tileWidth / 2;
-							t.y = Math.round(obj.y * tileWidth) / tileWidth + tileWidth / 2;
+							t.x = Math.round(obj.x * tileWidth) / tileWidth;
+							t.y = Math.floor(obj.y * tileWidth) / tileWidth;
 							t.x -= t.width / 2;
 							t.y -= t.height;
 							_targets.add(t);
