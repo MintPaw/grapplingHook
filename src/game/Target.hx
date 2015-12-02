@@ -1,6 +1,7 @@
 package game;
 
 import flixel.FlxSprite;
+import flixel.graphics.frames.FlxAtlasFrames;
 
 class Target extends FlxSprite
 {
@@ -14,7 +15,10 @@ class Target extends FlxSprite
 		if (type == "test") makeGraphic(10, 10, 0xFF444400);
 		else
 		{
-
+			var fileName:String = "assets/img/animals/" + type + "/" + type;
+			frames = FlxAtlasFrames.fromTexturePackerJson(
+			fileName + ".png",
+			fileName + ".json");
 		}
 	}
 }
