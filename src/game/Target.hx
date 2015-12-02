@@ -11,6 +11,10 @@ class Target extends FlxSprite
 		super();
 		this.type = type;
 		
-		if (type == "target") makeGraphic(10, 10, 0xFF444400);
+		if (type == "test") makeGraphic(10, 10, 0xFF444400);
+		else
+		{
+
+		}
 	}
 }

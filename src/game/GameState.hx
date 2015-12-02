@@ -78,10 +78,14 @@ class GameState extends FlxState
 
 			var clouds:Array<Int> = [4, 12, 20];
 
-			for (layer in tiledMap.layers) {
-				if (layer.type == TiledLayerType.OBJECT) {
-					for (obj in cast(layer, TiledObjectLayer).objects) {
-						if (obj.type == "door") {
+			for (layer in tiledMap.layers)
+			{
+				if (layer.type == TiledLayerType.OBJECT)
+				{
+					for (obj in cast(layer, TiledObjectLayer).objects)
+					{
+						if (obj.type == "door")
+						{
 							var d:Door = new Door();
 							d.x = obj.x;
 							d.y = obj.y;
@@ -91,7 +95,7 @@ class GameState extends FlxState
 						}
 
 						if (obj.type == "target") {
-							var t:Target = new Target(obj.type);
+							var t:Target = new Target(obj.properties.get("targetType"));
 							t.x = obj.x;
 							t.y = obj.y;
 							_targets.add(t);
@@ -172,8 +176,10 @@ class GameState extends FlxState
 			_player = new Player();
 			_player.hookCallback = hook;
 			_player.takePhotoCallback = takePhoto;
-			for (d in _doors) {
-				if (d.loc == Reg.prevLoc) {
+			for (d in _doors)
+			{
+				if (d.loc == Reg.prevLoc)
+				{
 					_player.x = d.x;
 					_player.y = d.y;
 					if (d.exitTo == "left") _player.facing = FlxObject.LEFT;
@@ -229,7 +235,8 @@ class GameState extends FlxState
 			_canvas.pixels.fillRect(_canvas.pixels.rect, 0);
 
 			if (_player.state == Player.HOOKING || _player.state == Player.HANGING)
-				Reg.drawLine(_player.hookPoint.x, 
+				Reg.drawLine(
+						_player.hookPoint.x, 
 						_player.hookPoint.y,
 						_player.hookTo.x,
 						_player.hookTo.y,
@@ -269,9 +276,12 @@ class GameState extends FlxState
 				Std.int(r.height));
 
 		var target:Target = null;
-		for (t in _targets) {
-			if (r.containsFlxPoint(t.getMidpoint())) {
-				if (target == null) {
+		for (t in _targets)
+		{
+			if (r.containsFlxPoint(t.getMidpoint()))
+			{
+				if (target == null)
+				{
 					target = t;
 					continue;
 				} else if (t.getMidpoint().distanceTo(rCentre)
@@ -279,7 +289,8 @@ class GameState extends FlxState
 			}
 		}
 
-		if (target != null) {
+		if (target != null)
+		{
 			p.hitTarget = true;
 			p.targetCentre.x = target.getMidpoint().x - r.x;
 			p.targetCentre.y = target.getMidpoint().y - r.y;
@@ -320,7 +331,8 @@ class GameState extends FlxState
 		var p:Player = cast(b2, Player);
 
 		var doorStates:Array<Int> = [Player.IDLE, Player.WALKING];
-		if (p.up && doorStates.indexOf(p.state) != -1) {
+		if (p.up && doorStates.indexOf(p.state) != -1)
+		{
 			p.freezeInput = true;
 			FlxG.camera.fade(0xFF000000, 1, false, function() {
 				Reg.prevLoc = Reg.loc;
@@ -329,5 +341,4 @@ class GameState extends FlxState
 			}, false);
 		}
 	}
-
 }
