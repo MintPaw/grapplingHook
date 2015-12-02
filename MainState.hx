@@ -2,6 +2,7 @@ package ;
 
 import flixel.FlxState;
 import flixel.FlxG;
+import flixel.math.FlxRandom;
 import game.GameState;
 
 class MainState extends FlxState
@@ -16,6 +17,7 @@ class MainState extends FlxState
 	{
 		super.create();
 		Reg.loc = "test";
+		Reg.rnd = new FlxRandom();
 		FlxG.switchState(new GameState());
 	}
 }
