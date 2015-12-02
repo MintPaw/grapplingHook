@@ -23,6 +23,7 @@ class Photo
 	{
 		var offset:FlxPoint = FlxPoint.get(20, 20);
 		var sprite:FlxSpriteGroup = new FlxSpriteGroup();
+		sprite.scrollFactor.set();
 
 		var bg:FlxSprite = new FlxSprite();
 		bg.makeGraphic(
@@ -31,6 +32,7 @@ class Photo
 				0xFFDDDDDD);
 
 		var photo:FlxSprite = new FlxSprite(data);
+		photo.scrollFactor.set();
 		photo.x += offset.x / 2;
 		photo.y += offset.y / 2;
 

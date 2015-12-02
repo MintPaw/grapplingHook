@@ -43,6 +43,7 @@ class GameState extends FlxState
 
 		{ // Setup misc
 			_fader = new FlxSprite();
+			_fader.scrollFactor.set();
 			_fader.makeGraphic(FlxG.width, FlxG.height, 0xFFFFFFFF);
 			_fader.alpha = 0;
 			Reg.fader = _fader;
@@ -267,8 +268,8 @@ class GameState extends FlxState
 		var p:Photo = new Photo();
 
 		var r:FlxRect = FlxRect.get(
-				_player.shutter.x,
-				_player.shutter.y,
+				_player.shutter.x - FlxG.camera.scroll.x,
+				_player.shutter.y - FlxG.camera.scroll.y,
 				_player.shutter.width * _player.shutter.scale.x,
 				_player.shutter.height * _player.shutter.scale.y);
 
