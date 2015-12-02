@@ -39,6 +39,8 @@ class GameState extends FlxState
 	{
 		super.create();
 
+		var tileWidth:Int = 32;
+
 		{ // Setup misc
 			_fader = new FlxSprite();
 			_fader.makeGraphic(FlxG.width, FlxG.height, 0xFFFFFFFF);
@@ -96,8 +98,10 @@ class GameState extends FlxState
 
 						if (obj.type == "target") {
 							var t:Target = new Target(obj.properties.get("targetType"));
-							t.x = obj.x;
-							t.y = obj.y;
+							t.x = Math.round(obj.x * tileWidth) / tileWidth + tileWidth / 2;
+							t.y = Math.round(obj.y * tileWidth) / tileWidth + tileWidth / 2;
+							t.x -= t.width / 2;
+							t.y -= t.height;
 							_targets.add(t);
 						}
 					}
@@ -189,8 +193,7 @@ class GameState extends FlxState
 		}
 
 		{ // Setup camera
-			var tileWidth = 32;
-
+			FlxG.camera.antialiasing = true;
 			FlxG.camera.fade(0xFF000000, 1, true, function() {
 				_player.freezeInput = false;
 			}, false);
@@ -227,8 +230,10 @@ class GameState extends FlxState
 		super.update(elapsed);
 
 		{ // Update collision
-			_player.hittingMap = FlxG.collide(_tilemap, _player);
+			_player.hittingMap = FlxG.collide(_player, _tilemap);
+
 			FlxG.overlap(_doors, _player, doorVPlayer);
+			FlxG.collide(_targets, _tilemap);
 		}
 
 		{ // Update drawing api
