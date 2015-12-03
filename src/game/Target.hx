@@ -1,6 +1,7 @@
 package game;
 
 import flixel.FlxSprite;
+import flixel.FlxObject;
 import flixel.graphics.frames.FlxAtlasFrames;
 
 class Target extends FlxSprite
@@ -54,6 +55,8 @@ class Target extends FlxSprite
 		maxVelocity.set(WALK_SPEED / 5, 600);
 		drag.x = maxVelocity.x * 4;
 		acceleration.y = maxVelocity.y * 2;
+		setFacingFlip(FlxObject.LEFT, true, false);
+		setFacingFlip(FlxObject.RIGHT, false, false);
 	}
 
 	override public function update(elapsed:Float):Void
@@ -82,6 +85,8 @@ class Target extends FlxSprite
 			}
 		}
 
+		if (acceleration.x > 0) facing = FlxObject.RIGHT;
+		if (acceleration.x < 0) facing = FlxObject.LEFT;
 		super.update(elapsed);
 	}
 
@@ -99,6 +104,7 @@ class Target extends FlxSprite
 		else if (state == G_WALKING)
 		{
 			acceleration.x = 0;
+			xToWalk = 0;
 		}
 		else if (state == G_EATING)
 		{
@@ -129,6 +135,14 @@ class Target extends FlxSprite
 		{
 			animation.play("eating");
 			timeTillWalk = Reg.rnd.int(EAT_TIME[0], EAT_TIME[1]);
+		}
+	}
+
+	public function blocked(dir:Int):Void
+	{
+		if (state == G_WALKING)
+		{
+			xToWalk -= Std.int((xToWalk - x) * 2);
 		}
 	}
 }

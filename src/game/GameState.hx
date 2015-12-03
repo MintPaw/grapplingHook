@@ -24,11 +24,14 @@ import flixel.addons.plugin.screengrab.FlxScreenGrab;
 class GameState extends FlxState
 {
 	private var _tilemap:FlxTilemapExt;
-	private var _player:Player;
-	private var _doors:FlxTypedGroup<Door>;
-	private var _targets:FlxTypedGroup<Target>;
 	private var _canvas:FlxSprite;
 	private var _fader:FlxSprite;
+
+	private var _player:Player;
+
+	private var _doors:FlxTypedGroup<Door>;
+	private var _targets:FlxTypedGroup<Target>;
+	private var _aiBlocks:FlxTypedGroup<FlxSprite>;
 
 	public function new()
 	{
@@ -53,6 +56,7 @@ class GameState extends FlxState
 			var tiledMap:TiledMap = new TiledMap("assets/map/" + Reg.loc + ".tmx");
 			_doors = new FlxTypedGroup<Door>();
 			_targets = new FlxTypedGroup<Target>();
+			_aiBlocks = new FlxTypedGroup<FlxSprite>();
 
 			var floorLeft:Array<Int> = [59];
 			var floorRight:Array<Int> = [60];
@@ -96,14 +100,25 @@ class GameState extends FlxState
 							d.exitTo = obj.properties.get("exitTo");
 							_doors.add(d);
 						}
-
-						if (obj.type == "target") {
+						else if (obj.type == "target")
+						{
 							var t:Target = new Target(obj.properties.get("targetType"));
 							t.x = Math.round(obj.x * tileWidth) / tileWidth;
 							t.y = Math.floor(obj.y * tileWidth) / tileWidth;
 							t.x -= t.width / 2;
 							t.y -= t.height;
 							_targets.add(t);
+						}
+						else if (obj.type == "aiBlock")
+						{
+							var o:FlxSprite = new FlxSprite();
+							o.facing = obj.properties.get("block") == "left"
+								? FlxObject.LEFT : FlxObject.RIGHT;
+							o.x = obj.x;
+							o.y = obj.y;
+							o.width = obj.width;
+							o.height = obj.height;
+							_aiBlocks.add(o);
 						}
 					}
 				}
@@ -235,6 +250,7 @@ class GameState extends FlxState
 
 			FlxG.overlap(_doors, _player, doorVPlayer);
 			FlxG.collide(_targets, _tilemap);
+			FlxG.overlap(_targets, _aiBlocks, targetVAiBlock);
 		}
 
 		{ // Update drawing api
@@ -347,4 +363,18 @@ class GameState extends FlxState
 			}, false);
 		}
 	}
+
+	private function targetVAiBlock(b1:FlxBasic, b2:FlxBasic):Void
+	{
+		var t:Target = cast(b1, Target);
+		var b:FlxSprite = cast(b2, FlxSprite);
+
+		if (
+				(t.facing == FlxObject.LEFT && b.facing == FlxObject.LEFT) ||
+				(t.facing == FlxObject.RIGHT && b.facing == FlxObject.RIGHT))
+		{
+			t.blocked(t.facing);
+		}
+	}
+
 }
