@@ -235,6 +235,7 @@ class GameState extends FlxState
 		add(_tilemap);
 		add(_doors);
 		add(_player);
+		add(_player.hookOrb);
 		add(_targets);
 		add(_fader);
 		add(_player.shutter);

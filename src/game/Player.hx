@@ -34,10 +34,11 @@ class Player extends FlxSprite
 	public static inline var CAMERAING:Int = 5;
 	public var state:Int = IDLE;
 	
-	// Parent set
+	// For parent
 	public var hookCallback:Dynamic;
 	public var takePhotoCallback:Dynamic;
 	public var hittingMap:Bool = false;
+	public var hookOrb:FlxSprite;
 
 	// Hook
 	public var angVelo:Float = 0;
@@ -77,6 +78,9 @@ class Player extends FlxSprite
 		shutter = new FlxSprite();
 		shutter.loadGraphic("assets/img/camerawork.png");
 		shutter.visible = false;
+
+		hookOrb = new FlxSprite();
+		hookOrb.visible = false;
 
 		makeGraphic(30, 30, 0xFF000055);
 	}
@@ -118,26 +122,31 @@ class Player extends FlxSprite
 		}
 
 		{ // Update camera
-			if (state == CAMERAING) {
+			if (state == CAMERAING)
+			{
 				shutter.x = FlxG.mouse.x - shutter.width / 2;
 				shutter.y = FlxG.mouse.y - shutter.height / 2;
-				if (justUp && shutter.scale.x < 2) {
+				if (justUp && shutter.scale.x < 2)
+				{
 					shutter.scale.x += 0.1;
 					shutter.scale.y += 0.1;
 				}
-				if (justDown && shutter.scale.x > 0.5) {
+				if (justDown && shutter.scale.x > 0.5)
+				{
 					shutter.scale.x -= 0.1;
 					shutter.scale.y -= 0.1;
 				}
 
-				if (_needToTakePhoto) {
+				if (_needToTakePhoto)
+				{
 					_needToTakePhoto = false;
 					Reg.fader.visible = true;
 					shutter.visible = true;
 					takePhotoCallback();
 				}
 
-				if (hook) {
+				if (hook)
+				{
 					_needToTakePhoto = true;
 					Reg.fader.visible = false;
 					shutter.visible = false;
@@ -147,7 +156,8 @@ class Player extends FlxSprite
 
 		{ // Update grappling
 			// Pull funciton
-			function pullHook(dir:Int):Void {
+			function pullHook(dir:Int):Void
+			{
 				var pullVelo:FlxVector = FlxVector.get();
 				pullVelo.copyFrom(hookTo);
 				pullVelo.subtractPoint(hookPoint);
@@ -159,12 +169,15 @@ class Player extends FlxSprite
 			}
 
 			// Hooking
-			if (state == HOOKING) {
+			if (state == HOOKING)
+			{
 				pullHook(5);
 				if (jump) switchState(HANGING);
 
 			// Hanging
-			} else if (state == HANGING) {
+			}
+			else if (state == HANGING)
+			{
 				if (up && !isTouching(FlxObject.UP)) pullHook(1);
 				if (down && !isTouching(FlxObject.DOWN)) pullHook(-1);
 				if (left) angVelo += .1;
@@ -183,7 +196,8 @@ class Player extends FlxSprite
 			}
 
 			// General hook logic
-			if (state == HOOKING || state == HANGING) {
+			if (state == HOOKING || state == HANGING)
+			{
 				FlxVelocity.moveTowardsPoint(this, hookPoint, 0, 16);
 				swingVelo.copyFrom(velocity);
 				if (isTouching(FlxObject.DOWN)) switchState(IDLE);
@@ -193,13 +207,17 @@ class Player extends FlxSprite
 		}
 
 		{ // Update ground movement
-			if (state == IDLE || state == WALKING) {
+			if (state == IDLE || state == WALKING)
+			{
 				// Conserve swinging
-				if (swingVelo.y != 0) {
+				if (swingVelo.y != 0)
+				{
+
 					velocity.y = swingVelo.y;
 					swingVelo.y = 0;
 				}
-				if (swingVelo.x != 0) {
+				if (swingVelo.x != 0)
+				{
 					velocity.x = swingVelo.x;
 					if (hittingMap) swingVelo.set();
 				}
@@ -216,7 +234,8 @@ class Player extends FlxSprite
 					velocity.y -= maxVelocity.y * JUMP_FACTOR;
 
 				// Hooking
-				if (hook) {
+				if (hook)
+				{
 					var tempHookTo:FlxPoint = hookCallback(getMidpoint(), angleFacing);
 					if (tempHookTo != null) {
 						hookTo.x = tempHookTo.x;
@@ -233,19 +252,22 @@ class Player extends FlxSprite
 					&& !isTouching(FlxObject.DOWN))
 				switchState(WALLING);
 
-			if (state == WALLING) {
+			if (state == WALLING)
+			{
 				var wallOnScale:Int = 0;
 				if (wallOn == FlxObject.LEFT) wallOnScale = 1;
 				if (wallOn == FlxObject.RIGHT) wallOnScale = -1;
 
-				if (jump) {
+				if (jump)
+				{
 					swingVelo.y = -WALL_JUMP_HEIGHT;
 					swingVelo.x = WALL_JUMP_SPEED * wallOnScale;
 					switchState(IDLE);
 				}
 
 				if ((wallOn == FlxObject.LEFT && right)
-						|| (wallOn == FlxObject.RIGHT && left)) {
+						|| (wallOn == FlxObject.RIGHT && left))
+				{
 					swingVelo.y = -WALL_JUMP_HEIGHT;
 					swingVelo.x = WALL_FALL_SPEED * wallOnScale;
 					switchState(IDLE);
@@ -258,46 +280,63 @@ class Player extends FlxSprite
 
 	private function switchState(newState:Int):Void
 	{
-		if (state == IDLE) {
-			// Leave IDLE
-		} else if (state == WALKING) {
-			// Leave WALKING
-		} else if (state == HOOKING) {
-			// Leave HOOKING
-		} else if (state == HANGING) {
-			// Leave HANGING
-		} else if (state == WALLING) {
-			// Leave WALLING
+		// Leaving
+		if (state == IDLE)
+		{
+		}
+		else if (state == WALKING)
+		{
+		}
+		else if (state == HOOKING)
+		{
+			if (newState != HANGING) hookOrb.visible = false;
+		}
+		else if (state == HANGING)
+		{
+			hookOrb.visible = false;
+		}
+		else if (state == WALLING)
+		{
 			wallOn = FlxObject.NONE;
-		} else if (state == CAMERAING) {
-			// Leave CAMERAING
+		}
+		else if (state == CAMERAING)
+		{
 			shutter.visible = false;
 			FlxTween.tween(Reg.fader, { alpha: 0 }, 1);
 		}
 
 		state = newState;
 
-		if (state == IDLE) {
-			// Enter IDLE
-		} else if (state == WALKING) {
-			// Enter WALKING
-		} else if (state == HOOKING) {
-			// Enter HOOKING
+		// Entering
+		if (state == IDLE)
+		{
+		}
+		else if (state == WALKING)
+		{
+		}
+		else if (state == HOOKING)
+		{
+			hookOrb.x = hookTo.x - hookOrb.width / 2;
+			hookOrb.y = hookTo.y - hookOrb.height / 2;
+			hookOrb.visible = true;
 			velocity.set();
 			acceleration.set();
-		} else if (state == HANGING) {
-			// Enter HANGING
+		}
+		else if (state == HANGING)
+		{
 			velocity.set();
 			acceleration.set();
-		} else if (state == WALLING) {
-			// Enter WALLING
+		}
+		else if (state == WALLING)
+		{
 			if (isTouching(FlxObject.LEFT)) wallOn = FlxObject.LEFT;
 			if (isTouching(FlxObject.RIGHT)) wallOn = FlxObject.RIGHT;
 			velocity.set();
 			acceleration.set();
 			swingVelo.set();
-		} else if (state == CAMERAING) {
-			// Enter CAMERAING
+		}
+		else if (state == CAMERAING)
+		{
 			Reg.fader.alpha = 0;
 			Reg.fader.color = 0xFF000000;
 			FlxTween.tween(Reg.fader, { alpha: .5 }, 1);
