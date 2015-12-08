@@ -118,6 +118,7 @@ class GameState extends FlxState
 							o.y = obj.y;
 							o.width = obj.width;
 							o.height = obj.height;
+							o.visible = false;
 							_aiBlocks.add(o);
 						}
 					}
@@ -238,6 +239,7 @@ class GameState extends FlxState
 		add(_enemies);
 		add(_fader);
 		add(_canvas);
+		add(_aiBlocks);
 	}
 
 	override public function update(elapsed:Float):Void

@@ -13,7 +13,6 @@ class Enemy extends FlxSprite
 	public static var WALK_SPEED:Int = 500;
 
 	public var state:Int;
-	public var dir:Int;
 
 	public function new(type:String)
 	{
@@ -49,12 +48,10 @@ class Enemy extends FlxSprite
 		{
 			if (state == WALKING)
 			{
-				acceleration.x = dir == FlxObject.LEFT ? -WALK_SPEED : WALK_SPEED;
+				acceleration.x = facing == FlxObject.LEFT ? -WALK_SPEED : WALK_SPEED;
 			}
 		}
 
-		if (acceleration.x > 0) facing = FlxObject.RIGHT;
-		if (acceleration.x < 0) facing = FlxObject.LEFT;
 		super.update(elapsed);
 	}
 
@@ -71,7 +68,7 @@ class Enemy extends FlxSprite
 		// Entering
 		if (state == WALKING)
 		{
-			dir = FlxObject.LEFT;
+			facing = FlxObject.LEFT;
 			animation.play("walking");
 		}
 	}
@@ -80,6 +77,7 @@ class Enemy extends FlxSprite
 	{
 		if (state == WALKING)
 		{
+			facing = facing == FlxObject.LEFT ? FlxObject.RIGHT : FlxObject.LEFT;
 		}
 	}
 }
