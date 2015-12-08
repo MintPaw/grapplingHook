@@ -3,7 +3,6 @@ package ;
 import flixel.FlxSprite;
 import flixel.math.FlxRandom;
 import flixel.util.FlxSpriteUtil;
-import game.Photo;
 
 class Reg
 {
@@ -11,7 +10,6 @@ class Reg
 	public static var prevLoc:String = "test0";
 	public static var loc:String = "none";
 	public static var fader:FlxSprite;
-	public static var photos:Array<Photo> = [];
 	public static var rnd:FlxRandom;
 
 	public function new() {}

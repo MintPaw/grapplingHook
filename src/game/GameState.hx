@@ -30,7 +30,7 @@ class GameState extends FlxState
 	private var _player:Player;
 
 	private var _doors:FlxTypedGroup<Door>;
-	private var _targets:FlxTypedGroup<Target>;
+	private var _enemies:FlxTypedGroup<Enemy>;
 	private var _aiBlocks:FlxTypedGroup<FlxSprite>;
 
 	public function new()
@@ -55,7 +55,7 @@ class GameState extends FlxState
 		{ // Setup tilemap
 			var tiledMap:TiledMap = new TiledMap("assets/map/" + Reg.loc + ".tmx");
 			_doors = new FlxTypedGroup<Door>();
-			_targets = new FlxTypedGroup<Target>();
+			_enemies = new FlxTypedGroup<Enemy>();
 			_aiBlocks = new FlxTypedGroup<FlxSprite>();
 
 			var floorLeft:Array<Int> = [59];
@@ -100,14 +100,14 @@ class GameState extends FlxState
 							d.exitTo = obj.properties.get("exitTo");
 							_doors.add(d);
 						}
-						else if (obj.type == "target")
+						else if (obj.type == "enemy")
 						{
-							var t:Target = new Target(obj.properties.get("targetType"));
+							var t:Enemy = new Enemy(obj.properties.get("enemyType"));
 							t.x = Math.round(obj.x * tileWidth) / tileWidth;
 							t.y = Math.floor(obj.y * tileWidth) / tileWidth;
 							t.x -= t.width / 2;
 							t.y -= t.height;
-							_targets.add(t);
+							_enemies.add(t);
 						}
 						else if (obj.type == "aiBlock")
 						{
@@ -195,7 +195,6 @@ class GameState extends FlxState
 		{ // Setup player
 			_player = new Player();
 			_player.hookCallback = hook;
-			_player.takePhotoCallback = takePhoto;
 			for (d in _doors)
 			{
 				if (d.loc == Reg.prevLoc)
@@ -236,9 +235,8 @@ class GameState extends FlxState
 		add(_doors);
 		add(_player);
 		add(_player.hookOrb);
-		add(_targets);
+		add(_enemies);
 		add(_fader);
-		add(_player.shutter);
 		add(_canvas);
 	}
 
@@ -250,8 +248,8 @@ class GameState extends FlxState
 			_player.hittingMap = FlxG.collide(_player, _tilemap);
 
 			FlxG.overlap(_doors, _player, doorVPlayer);
-			FlxG.collide(_targets, _tilemap);
-			FlxG.overlap(_targets, _aiBlocks, targetVAiBlock);
+			FlxG.collide(_enemies, _tilemap);
+			FlxG.overlap(_enemies, _aiBlocks, enemyVAiBlock);
 		}
 
 		{ // Update drawing api
@@ -280,74 +278,6 @@ class GameState extends FlxState
 		return result;
 	}
 
-	private function takePhoto():Void
-	{
-		var p:Photo = new Photo();
-
-		var r:FlxRect = FlxRect.get(
-				_player.shutter.x - FlxG.camera.scroll.x,
-				_player.shutter.y - FlxG.camera.scroll.y,
-				_player.shutter.width * _player.shutter.scale.x,
-				_player.shutter.height * _player.shutter.scale.y);
-
-		var rCentre:FlxPoint = FlxPoint.get(r.x + r.width / 2, r.y + r.height / 2);
-
-		FlxScreenGrab.defineCaptureRegion(
-				Std.int(r.x),
-				Std.int(r.y),
-				Std.int(r.width),
-				Std.int(r.height));
-
-		var target:Target = null;
-		for (t in _targets)
-		{
-			if (r.containsFlxPoint(t.getMidpoint()))
-			{
-				if (target == null)
-				{
-					target = t;
-					continue;
-				} else if (t.getMidpoint().distanceTo(rCentre)
-						< target.getMidpoint().distanceTo(rCentre)) target = t;
-			}
-		}
-
-		if (target != null)
-		{
-			p.hitTarget = true;
-			p.targetCentre.x = target.getMidpoint().x - r.x;
-			p.targetCentre.y = target.getMidpoint().y - r.y;
-			p.centrePercent =
-				Math.round(target.getMidpoint().distanceTo(rCentre)
-				/ Math.sqrt(Math.pow(r.width/2,2) + Math.pow(r.height/2,2))*100);
-		}
-
-		p.data = FlxScreenGrab.grab(null, null, true).bitmapData;
-		Reg.photos.push(p);
-
-		var p:FlxSprite = Reg.photos[Reg.photos.length-1].getSprite();
-		p.x = FlxG.width / 2 - p.width / 2;
-		p.y = FlxG.height / 2 - p.height / 2;
-		add(p);
-
-		_player.freezeInput = true;
-		//Slow time
-		FlxMintNumTween.t(1, 0.1, 0.5, 
-				function (f:Float) {FlxG.timeScale=f; });
-
-		//Fade out image
-		FlxMintNumTween.t(1, 0, 0.5, 
-				function (f:Float) {p.alpha=f;}, {startDelay:3}, true);
-
-		//Speed time back up
-		FlxMintNumTween.t(0.1, 1, 0.5, 
-				function (f:Float) {FlxG.timeScale=f;}, {startDelay:3.5, onComplete: 
-					function (f:FlxTween) {_player.freezeInput = false;}}, true);
-
-		r.put();
-		rCentre.put();
-	}
-
 	private function doorVPlayer(b1:FlxBasic, b2:FlxBasic):Void
 	{
 		var d:Door = cast(b1, Door);
@@ -365,9 +295,9 @@ class GameState extends FlxState
 		}
 	}
 
-	private function targetVAiBlock(b1:FlxBasic, b2:FlxBasic):Void
+	private function enemyVAiBlock(b1:FlxBasic, b2:FlxBasic):Void
 	{
-		var t:Target = cast(b1, Target);
+		var t:Enemy = cast(b1, Enemy);
 		var b:FlxSprite = cast(b2, FlxSprite);
 
 		if (

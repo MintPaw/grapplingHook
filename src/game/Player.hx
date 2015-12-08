@@ -31,7 +31,6 @@ class Player extends FlxSprite
 	public static inline var HOOKING:Int = 2;
 	public static inline var HANGING:Int = 3;
 	public static inline var WALLING:Int = 4;
-	public static inline var CAMERAING:Int = 5;
 	public var state:Int = IDLE;
 	
 	// For parent
@@ -65,9 +64,6 @@ class Player extends FlxSprite
 	// Walling
 	public var wallOn:Int = FlxObject.NONE;
 
-	// Camera
-	public var shutter:FlxSprite;
-
 	public function new()
 	{
 		super();
@@ -75,10 +71,6 @@ class Player extends FlxSprite
 		maxVelocity.set(MAX_SPEED, MAX_FALL);
 		drag.x = maxVelocity.x * 4;
 		
-		shutter = new FlxSprite();
-		shutter.loadGraphic("assets/img/camerawork.png");
-		shutter.visible = false;
-
 		hookOrb = new FlxSprite();
 		hookOrb.visible = false;
 
@@ -116,42 +108,6 @@ class Player extends FlxSprite
 		}
 
 		{ // Update weapon
-			var toCameraing:Array<Int> = [IDLE, WALKING, HANGING, WALLING];
-			if (wep2 && toCameraing.indexOf(state) != -1) switchState(CAMERAING);
-			if (wep1 && state == CAMERAING) switchState(IDLE);
-		}
-
-		{ // Update camera
-			if (state == CAMERAING)
-			{
-				shutter.x = FlxG.mouse.x - shutter.width / 2;
-				shutter.y = FlxG.mouse.y - shutter.height / 2;
-				if (justUp && shutter.scale.x < 2)
-				{
-					shutter.scale.x += 0.1;
-					shutter.scale.y += 0.1;
-				}
-				if (justDown && shutter.scale.x > 0.5)
-				{
-					shutter.scale.x -= 0.1;
-					shutter.scale.y -= 0.1;
-				}
-
-				if (_needToTakePhoto)
-				{
-					_needToTakePhoto = false;
-					Reg.fader.visible = true;
-					shutter.visible = true;
-					takePhotoCallback();
-				}
-
-				if (hook)
-				{
-					_needToTakePhoto = true;
-					Reg.fader.visible = false;
-					shutter.visible = false;
-				}
-			}
 		}
 
 		{ // Update grappling
@@ -299,12 +255,6 @@ class Player extends FlxSprite
 		{
 			wallOn = FlxObject.NONE;
 		}
-		else if (state == CAMERAING)
-		{
-			shutter.visible = false;
-			FlxTween.tween(Reg.fader, { alpha: 0 }, 1);
-		}
-
 		state = newState;
 
 		// Entering
@@ -334,13 +284,6 @@ class Player extends FlxSprite
 			velocity.set();
 			acceleration.set();
 			swingVelo.set();
-		}
-		else if (state == CAMERAING)
-		{
-			Reg.fader.alpha = 0;
-			Reg.fader.color = 0xFF000000;
-			FlxTween.tween(Reg.fader, { alpha: .5 }, 1);
-			shutter.visible = true;
 		}
 	}
 }
