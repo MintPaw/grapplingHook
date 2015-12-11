@@ -39,6 +39,7 @@ class GameState extends FlxState
 	private var _lookingToTrigger:String = "";
 	private var _triggerDiff:Array<FlxPoint> = [];
 	private var _triggerToName:Map<FlxSprite, String> = new Map();
+	private var _nameToMap:Map<String, FlxTilemapExt> = new Map();
 
 	public function new()
 	{
@@ -157,6 +158,7 @@ class GameState extends FlxState
 							1);
 
 					_tilemaps.push(t);
+					_nameToMap.set(layer.name, t);
 
 					if (layer.name.indexOf("anti") == -1) _tilemap = t;
 				}
@@ -278,6 +280,37 @@ class GameState extends FlxState
 	override public function update(elapsed:Float):Void
 	{
 		super.update(elapsed);
+
+		{ // Check for anti switch
+			if (_lookingToTrigger != "")
+			{
+				var willTrigger:Bool = true;
+
+				var r:FlxRect = FlxRect.get();
+				r.x = FlxG.camera.scroll.x;
+				r.y = FlxG.camera.scroll.y;
+				r.width = FlxG.camera.width;
+				r.height = FlxG.camera.height;
+
+				for (i in _triggerDiff)
+				{
+					if (r.containsFlxPoint(i))
+					{
+						willTrigger = false;
+						break;
+					}
+				}
+
+				if (willTrigger)
+				{
+					remove(_tilemap);
+					_tilemap = _nameToMap.get(_lookingToTrigger);
+					add(_tilemap);
+					_lookingToTrigger = "";
+				}
+			}
+		}
+
 		if (FlxG.keys.pressed.Q) Sys.exit(0);
 
 		{ // Update collision
@@ -354,7 +387,23 @@ class GameState extends FlxState
 	{
 		var t:FlxSprite = cast(b1, FlxSprite);
 		_lookingToTrigger = _triggerToName.get(t);
-
 		t.kill();
+
+		var antiMap:FlxTilemapExt = _nameToMap.get(_lookingToTrigger);
+		_triggerDiff = [];
+		for (i in 0...antiMap.totalTiles)
+		{
+			if (antiMap.getTileByIndex(i) != _tilemap.getTileByIndex(i))
+			{
+				var t:FlxPoint = new FlxPoint();
+				t.x = (i % _tilemap.widthInTiles) * 32;
+				t.y = Std.int(i / _tilemap.widthInTiles) * 32;
+
+				_triggerDiff.push(new FlxPoint(t.x, t.y));
+				_triggerDiff.push(new FlxPoint(t.x + 32, t.y));
+				_triggerDiff.push(new FlxPoint(t.x, t.y + 32));
+				_triggerDiff.push(new FlxPoint(t.x + 32, t.y + 32));
+			}
+		}
 	}
 }
