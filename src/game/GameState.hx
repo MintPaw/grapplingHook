@@ -19,6 +19,7 @@ import flixel.addons.editors.tiled.TiledLayer;
 import flixel.addons.editors.tiled.TiledTileLayer;
 import flixel.addons.editors.tiled.TiledObjectLayer;
 import flixel.addons.plugin.screengrab.FlxScreenGrab;
+import openfl.geom.Rectangle;
 
 
 class GameState extends FlxState
@@ -240,11 +241,14 @@ class GameState extends FlxState
 		add(_fader);
 		add(_canvas);
 		add(_aiBlocks);
+
+		//_player.active = false;
 	}
 
 	override public function update(elapsed:Float):Void
 	{
 		super.update(elapsed);
+		if (FlxG.keys.pressed.Q) Sys.exit(0);
 
 		{ // Update collision
 			_player.hittingMap = FlxG.collide(_player, _tilemap);
@@ -255,7 +259,12 @@ class GameState extends FlxState
 		}
 
 		{ // Update drawing api
-			_canvas.pixels.fillRect(_canvas.pixels.rect, 0);
+			var fillRect:Rectangle = new Rectangle();
+			fillRect.x = FlxG.camera.x; 
+			fillRect.y = FlxG.camera.y; 
+			fillRect.width = FlxG.camera.width; 
+			fillRect.height = FlxG.camera.height; 
+			_canvas.pixels.fillRect(fillRect, 0);
 
 			if (_player.state == Player.HOOKING || _player.state == Player.HANGING)
 				Reg.drawLine(
