@@ -24,6 +24,7 @@ import openfl.geom.Rectangle;
 
 class GameState extends FlxState
 {
+	private var _tilemaps:Array<FlxTilemapExt>;
 	private var _tilemap:FlxTilemapExt;
 	private var _canvas:FlxSprite;
 	private var _fader:FlxSprite;
@@ -54,6 +55,8 @@ class GameState extends FlxState
 		}
 
 		{ // Setup tilemap
+			_tilemaps = [];
+
 			var tiledMap:TiledMap = new TiledMap("assets/map/" + Reg.loc + ".tmx");
 			_doors = new FlxTypedGroup<Door>();
 			_enemies = new FlxTypedGroup<Enemy>();
@@ -124,74 +127,82 @@ class GameState extends FlxState
 						}
 					}
 				}
+				else if (layer.type == TiledLayerType.TILE) {
+					var t = new FlxTilemapExt();
+
+					t.loadMapFromCSV(
+							cast(layer, TiledTileLayer).csvData,
+							"assets/" + tiledMap.tilesetArray[0].imageSource.substr(3),
+							32,
+							32,
+							null,
+							1);
+
+					_tilemaps.push(t);
+
+					if (layer.name.indexOf("anti") == -1) _tilemap = t;
+				}
 			}
-			
-			_tilemap = new FlxTilemapExt();
 
-			_tilemap.loadMapFromCSV(
-					cast(tiledMap.layers[0], TiledTileLayer).csvData,
-					"assets/" + tiledMap.tilesetArray[0].imageSource.substr(3),
-					32,
-					32,
-					null,
-					1);
+			var tempFL:Array<Int> = [];
+			var tempFR:Array<Int> = [];
+			var tempCL:Array<Int> = [];
+			var tempCR:Array<Int> = [];
+			var tempSteepThick:Array<Int> = [];
+			var tempSteepThin:Array<Int> = [];
+			var tempShallowThick:Array<Int> = [];
+			var tempShallowThin:Array<Int> = [];
 
-		var tempFL:Array<Int> = [];
-		var tempFR:Array<Int> = [];
-		var tempCL:Array<Int> = [];
-		var tempCR:Array<Int> = [];
-		var tempSteepThick:Array<Int> = [];
-		var tempSteepThin:Array<Int> = [];
-		var tempShallowThick:Array<Int> = [];
-		var tempShallowThin:Array<Int> = [];
+			tempFL = tempFL.concat(floorLeft);
+			tempFL = tempFL.concat(floorLeftShallowTop);
+			tempFL = tempFL.concat(floorLeftShallowBot);
+			tempFL = tempFL.concat(floorLeftSteepTop);
+			tempFL = tempFL.concat(floorLeftSteepBot);
 
-		tempFL = tempFL.concat(floorLeft);
-		tempFL = tempFL.concat(floorLeftShallowTop);
-		tempFL = tempFL.concat(floorLeftShallowBot);
-		tempFL = tempFL.concat(floorLeftSteepTop);
-		tempFL = tempFL.concat(floorLeftSteepBot);
+			tempFR = tempFR.concat(floorRight);
+			tempFR = tempFR.concat(floorRightShallowTop);
+			tempFR = tempFR.concat(floorRightShallowBot);
+			tempFR = tempFR.concat(floorRightSteepTop);
+			tempFR = tempFR.concat(floorRightSteepBot);
 
-		tempFR = tempFR.concat(floorRight);
-		tempFR = tempFR.concat(floorRightShallowTop);
-		tempFR = tempFR.concat(floorRightShallowBot);
-		tempFR = tempFR.concat(floorRightSteepTop);
-		tempFR = tempFR.concat(floorRightSteepBot);
+			tempCL = tempCL.concat(ceilLeft);
+			tempCL = tempCL.concat(ceilLeftShallowTop);
+			tempCL = tempCL.concat(ceilLeftShallowBot);
+			tempCL = tempCL.concat(ceilLeftSteepTop);
+			tempCL = tempCL.concat(ceilLeftSteepBot);
 
-		tempCL = tempCL.concat(ceilLeft);
-		tempCL = tempCL.concat(ceilLeftShallowTop);
-		tempCL = tempCL.concat(ceilLeftShallowBot);
-		tempCL = tempCL.concat(ceilLeftSteepTop);
-		tempCL = tempCL.concat(ceilLeftSteepBot);
+			tempCR = tempCR.concat(ceilRight);
+			tempCR = tempCR.concat(ceilRightShallowTop);
+			tempCR = tempCR.concat(ceilRightShallowBot);
+			tempCR = tempCR.concat(ceilRightSteepTop);
+			tempCR = tempCR.concat(ceilRightSteepBot);
 
-		tempCR = tempCR.concat(ceilRight);
-		tempCR = tempCR.concat(ceilRightShallowTop);
-		tempCR = tempCR.concat(ceilRightShallowBot);
-		tempCR = tempCR.concat(ceilRightSteepTop);
-		tempCR = tempCR.concat(ceilRightSteepBot);
+			tempSteepThick = tempSteepThick = tempSteepThick.concat(ceilLeftSteepBot);
+			tempSteepThick = tempSteepThick = tempSteepThick.concat(ceilRightSteepBot);
+			tempSteepThick = tempSteepThick.concat(floorLeftSteepBot);
+			tempSteepThick = tempSteepThick.concat(floorRightSteepBot);
 
-		tempSteepThick = tempSteepThick = tempSteepThick.concat(ceilLeftSteepBot);
-		tempSteepThick = tempSteepThick = tempSteepThick.concat(ceilRightSteepBot);
-		tempSteepThick = tempSteepThick.concat(floorLeftSteepBot);
-		tempSteepThick = tempSteepThick.concat(floorRightSteepBot);
+			tempShallowThick = tempShallowThick.concat(ceilLeftShallowTop);
+			tempShallowThick = tempShallowThick.concat(ceilRightShallowTop);
+			tempShallowThick = tempShallowThick.concat(floorLeftShallowTop);
+			tempShallowThick = tempShallowThick.concat(floorRightShallowTop);
 
-		tempShallowThick = tempShallowThick.concat(ceilLeftShallowTop);
-		tempShallowThick = tempShallowThick.concat(ceilRightShallowTop);
-		tempShallowThick = tempShallowThick.concat(floorLeftShallowTop);
-		tempShallowThick = tempShallowThick.concat(floorRightShallowTop);
+			tempSteepThin = tempSteepThin.concat(floorLeftSteepTop);
+			tempSteepThin = tempSteepThin.concat(floorRightSteepTop);
+			tempSteepThin = tempSteepThin.concat(ceilLeftSteepTop);
+			tempSteepThin = tempSteepThin.concat(ceilRightSteepTop);
 
-		tempSteepThin = tempSteepThin.concat(floorLeftSteepTop);
-		tempSteepThin = tempSteepThin.concat(floorRightSteepTop);
-		tempSteepThin = tempSteepThin.concat(ceilLeftSteepTop);
-		tempSteepThin = tempSteepThin.concat(ceilRightSteepTop);
+			tempShallowThin = tempShallowThin.concat(ceilLeftShallowBot);
+			tempShallowThin = tempShallowThin.concat(ceilRightShallowBot);
+			tempShallowThin = tempShallowThin.concat(floorLeftShallowBot);
+			tempShallowThin = tempShallowThin.concat(floorRightShallowBot);
 
-		tempShallowThin = tempShallowThin.concat(ceilLeftShallowBot);
-		tempShallowThin = tempShallowThin.concat(ceilRightShallowBot);
-		tempShallowThin = tempShallowThin.concat(floorLeftShallowBot);
-		tempShallowThin = tempShallowThin.concat(floorRightShallowBot);
-
-		_tilemap.setSlopes(tempFL, tempFR, tempCL, tempCR);
-		_tilemap.setSteep(tempSteepThick, tempSteepThin);
-		_tilemap.setGentle(tempShallowThick, tempShallowThin);
+			for (t in _tilemaps)
+			{
+				t.setSlopes(tempFL, tempFR, tempCL, tempCR);
+				t.setSteep(tempSteepThick, tempSteepThin);
+				t.setGentle(tempShallowThick, tempShallowThin);
+			}
 		}
 
 		{ // Setup player
@@ -260,10 +271,11 @@ class GameState extends FlxState
 
 		{ // Update drawing api
 			var fillRect:Rectangle = new Rectangle();
-			fillRect.x = FlxG.camera.x; 
-			fillRect.y = FlxG.camera.y; 
+			fillRect.x = FlxG.camera.scroll.x; 
+			fillRect.y = FlxG.camera.scroll.y; 
 			fillRect.width = FlxG.camera.width; 
 			fillRect.height = FlxG.camera.height; 
+			trace(fillRect);
 			_canvas.pixels.fillRect(fillRect, 0);
 
 			if (_player.state == Player.HOOKING || _player.state == Player.HANGING)
