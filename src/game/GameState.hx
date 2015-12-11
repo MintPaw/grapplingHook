@@ -34,6 +34,11 @@ class GameState extends FlxState
 	private var _doors:FlxTypedGroup<Door>;
 	private var _enemies:FlxTypedGroup<Enemy>;
 	private var _aiBlocks:FlxTypedGroup<FlxSprite>;
+	private var _antiTriggers:FlxTypedGroup<FlxSprite>;
+
+	private var _lookingToTrigger:String = "";
+	private var _triggerDiff:Array<FlxPoint> = [];
+	private var _triggerToName:Map<FlxSprite, String> = new Map();
 
 	public function new()
 	{
@@ -61,6 +66,7 @@ class GameState extends FlxState
 			_doors = new FlxTypedGroup<Door>();
 			_enemies = new FlxTypedGroup<Enemy>();
 			_aiBlocks = new FlxTypedGroup<FlxSprite>();
+			_antiTriggers = new FlxTypedGroup<FlxSprite>();
 
 			var floorLeft:Array<Int> = [59];
 			var floorRight:Array<Int> = [60];
@@ -124,6 +130,18 @@ class GameState extends FlxState
 							o.height = obj.height;
 							o.visible = false;
 							_aiBlocks.add(o);
+						}
+						else if (obj.type == "antiTrigger")
+						{
+							var o:FlxSprite = new FlxSprite();
+							o.x = obj.x;
+							o.y = obj.y;
+							o.width = obj.width;
+							o.height = obj.height;
+							o.visible = false;
+							_antiTriggers.add(o);
+
+							_triggerToName.set(o, obj.properties.get("trigger"));
 						}
 					}
 				}
@@ -252,6 +270,7 @@ class GameState extends FlxState
 		add(_fader);
 		add(_canvas);
 		add(_aiBlocks);
+		add(_aiBlocks);
 
 		//_player.active = false;
 	}
@@ -265,6 +284,7 @@ class GameState extends FlxState
 			_player.hittingMap = FlxG.collide(_player, _tilemap);
 
 			FlxG.overlap(_doors, _player, doorVPlayer);
+			FlxG.overlap(_antiTriggers, _player, antiTriggerVPlayer);
 			FlxG.collide(_enemies, _tilemap);
 			FlxG.overlap(_enemies, _aiBlocks, enemyVAiBlock);
 		}
@@ -275,7 +295,6 @@ class GameState extends FlxState
 			fillRect.y = FlxG.camera.scroll.y; 
 			fillRect.width = FlxG.camera.width; 
 			fillRect.height = FlxG.camera.height; 
-			trace(fillRect);
 			_canvas.pixels.fillRect(fillRect, 0);
 
 			if (_player.state == Player.HOOKING || _player.state == Player.HANGING)
@@ -331,4 +350,11 @@ class GameState extends FlxState
 		}
 	}
 
+	private function antiTriggerVPlayer(b1:FlxBasic, b2:FlxBasic):Void
+	{
+		var t:FlxSprite = cast(b1, FlxSprite);
+		_lookingToTrigger = _triggerToName.get(t);
+
+		t.kill();
+	}
 }
