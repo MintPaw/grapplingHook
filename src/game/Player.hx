@@ -8,6 +8,7 @@ import flixel.math.FlxVelocity;
 import flixel.math.FlxVector;
 import flixel.math.FlxPoint;
 import flixel.tweens.FlxTween;
+import flixel.graphics.frames.FlxAtlasFrames;
 
 class Player extends FlxSprite
 {
@@ -74,7 +75,11 @@ class Player extends FlxSprite
 		hookOrb = new FlxSprite();
 		hookOrb.visible = false;
 
-		makeGraphic(30, 30, 0xFF000055);
+		Reg.setAtlas(this, "assets/img/player");
+		Reg.doubleSize(this);
+
+		animation.addByPrefix("idle", "hero_idle", 10);
+		animation.addByPrefix("running", "hero_run", 10);
 	}
 
 	override public function update(elapsed:Float):Void
@@ -260,9 +265,11 @@ class Player extends FlxSprite
 		// Entering
 		if (state == IDLE)
 		{
+			animation.play("idle");
 		}
 		else if (state == WALKING)
 		{
+			animation.play("walking");
 		}
 		else if (state == HOOKING)
 		{

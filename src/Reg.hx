@@ -3,6 +3,8 @@ package ;
 import flixel.FlxSprite;
 import flixel.math.FlxRandom;
 import flixel.util.FlxSpriteUtil;
+import flixel.graphics.frames.FlxAtlasFrames;
+import openfl.Assets;
 
 class Reg
 {
@@ -24,5 +26,21 @@ class Reg
 	public static function drawPoint(x:Float, y:Float, color:UInt)
 	{
 		FlxSpriteUtil.drawCircle(canvas, x, y, 3, color);
+	}
+
+	public static function setAtlas(s:FlxSprite, t:String):Void
+	{
+		s.frames = FlxAtlasFrames.fromTexturePackerJson(
+				t + ".png",
+				Assets.getText(t + ".json"));
+	}
+
+	public static function doubleSize(s:FlxSprite):Void
+	{
+		s.scale.x *= 2;
+		s.scale.y *= 2;
+		s.width *= 2;
+		s.height *= 2;
+		s.centerOffsets(false);
 	}
 }
