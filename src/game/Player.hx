@@ -189,8 +189,18 @@ class Player extends FlxSprite
 				if (isTouching(FlxObject.DOWN)) acceleration.x = 0 else speed = 0;
 
 				// Basic movement
-				if (left) acceleration.x -= speed;
-				if (right) acceleration.x += speed;
+				if (left)
+				{
+					acceleration.x -= speed;
+					switchState(WALKING);
+				}
+				else if (right)
+				{
+					acceleration.x += speed;
+					switchState(WALKING);
+				} else {
+					switchState(IDLE);
+				}
 				if (jump && isTouching(FlxObject.DOWN))
 					velocity.y -= maxVelocity.y * JUMP_FACTOR;
 
@@ -269,7 +279,7 @@ class Player extends FlxSprite
 		}
 		else if (state == WALKING)
 		{
-			animation.play("walking");
+			animation.play("running");
 		}
 		else if (state == HOOKING)
 		{
