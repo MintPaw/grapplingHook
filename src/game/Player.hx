@@ -80,6 +80,9 @@ class Player extends FlxSprite
 
 		animation.addByPrefix("idle", "hero_idle", 10);
 		animation.addByPrefix("running", "hero_run", 10);
+
+		setFacingFlip(FlxObject.LEFT, true, false);
+		setFacingFlip(FlxObject.RIGHT, false, false);
 	}
 
 	override public function update(elapsed:Float):Void
@@ -192,11 +195,13 @@ class Player extends FlxSprite
 				if (left)
 				{
 					acceleration.x -= speed;
+					facing = FlxObject.LEFT;
 					switchState(WALKING);
 				}
 				else if (right)
 				{
 					acceleration.x += speed;
+					facing = FlxObject.RIGHT;
 					switchState(WALKING);
 				} else {
 					switchState(IDLE);
