@@ -109,7 +109,7 @@ class Player extends FlxSprite
 				if (FlxG.keys.pressed.ONE) wep1 = true;
 				if (FlxG.keys.pressed.TWO) wep2 = true;
 				if (FlxG.keys.justPressed.SPACE) jump = true;
-				if (FlxG.mouse.justPressed) hook = true;
+				if (FlxG.keys.pressed.J) hook = true;
 			}
 
 			var dirPoint:FlxPoint = FlxPoint.get();
@@ -126,7 +126,6 @@ class Player extends FlxSprite
 			else if (dirPoint.x == -1 && dirPoint.y == 1) angleFacing = 5*Math.PI/4;
 			else if (dirPoint.x == 0 && dirPoint.y == 1) angleFacing = 3*Math.PI/2;
 			else if (dirPoint.x == 1 && dirPoint.y == 1) angleFacing = 7*Math.PI/4;
-			trace(up, down, left, right, dirPoint, angleFacing*(180/Math.PI));
 			angleFacing = -angleFacing;
 		}
 
