@@ -1,0 +1,31 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"args": [
+				"compilePath=${workspaceRoot}",
+				"compileCommand=openfl build\\ proj.hxml",
+				"runPath=${workspaceRoot}/bin/linux64/cpp/bin",
+				"runCommand=GrapplingHook",
+				"runInTerminal=true"
+			],
+			"name": "Build and debug",
+			"type": "hxcpp",
+			"request": "launch",
+			"program": "",
+			"stopOnEntry": true
+		},
+		{
+			"args": [
+				"runPath=${workspaceRoot}/bin/linux64/cpp/bin",
+				"runCommand=GrapplingHook",
+				"runInTerminal=true"
+			],
+			"name": "Debug",
+			"type": "hxcpp",
+			"request": "launch",
+			"program": "",
+			"stopOnEntry": true
+		}
+	]
+}
