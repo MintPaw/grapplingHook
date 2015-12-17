@@ -255,7 +255,12 @@ class GameState extends FlxState
 		}
 
 		{ // Update drawing api
-			_canvas.pixels.fillRect(_canvas.pixels.rect, 0);
+			var c:openfl.geom.Rectangle = new openfl.geom.Rectangle(
+					FlxG.camera.scroll.x,
+					FlxG.camera.scroll.y,
+					FlxG.camera.width,
+					FlxG.camera.height);
+			_canvas.pixels.fillRect(c, 0);
 
 			if (_player.state == Player.HOOKING || _player.state == Player.HANGING)
 				Reg.drawLine(
