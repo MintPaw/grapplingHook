@@ -81,7 +81,8 @@ class Player extends FlxSprite
 		Reg.doubleSize(this);
 
 		animation.addByPrefix("idle", "hero_idle", 10);
-		animation.addByPrefix("running", "hero_run", 10);
+		animation.addByPrefix("walking", "hero_run", 10);
+		animation.addByPrefix("attack1", "hero_kick", 10, false);
 
 		setFacingFlip(FlxObject.LEFT, true, false);
 		setFacingFlip(FlxObject.RIGHT, false, false);
@@ -238,7 +239,7 @@ class Player extends FlxSprite
 				}
 
 				// Attacking
-				if (attack)
+				if (attack && isTouching(FlxObject.DOWN))
 				{
 					switchState(ATTACKING);
 				}
@@ -271,6 +272,10 @@ class Player extends FlxSprite
 					switchState(IDLE);
 				}
 			}
+		}
+
+		{ // Update attacking
+			if (state == ATTACKING && animation.finished) switchState(IDLE);
 		}
 
 		super.update(elapsed);
@@ -309,7 +314,7 @@ class Player extends FlxSprite
 		}
 		else if (state == WALKING)
 		{
-			animation.play("running");
+			animation.play("walking");
 		}
 		else if (state == HOOKING)
 		{
@@ -334,6 +339,7 @@ class Player extends FlxSprite
 		}
 		else if (state == ATTACKING)
 		{
+			acceleration.set();
 			animation.play("attack1");
 		}
 	}
