@@ -32,6 +32,7 @@ class Player extends FlxSprite
 	public static inline var HOOKING:Int = 2;
 	public static inline var HANGING:Int = 3;
 	public static inline var WALLING:Int = 4;
+	public static inline var ATTACKING:Int = 5;
 	public var state:Int = IDLE;
 	
 	// For parent
@@ -60,6 +61,7 @@ class Player extends FlxSprite
 	public var justDown:Bool = false;
 	public var jump:Bool = false;
 	public var hook:Bool = false;
+	public var attack:Bool = false;
 	public var angleFacing:Float = 0;
 
 	// Walling
@@ -88,7 +90,7 @@ class Player extends FlxSprite
 	override public function update(elapsed:Float):Void
 	{
 		wep1 = wep2 = left = right = up = down = jump = hook = justLeft =
-			justRight = justUp = justDown = false;
+			justRight = justUp = justDown = attack = false;
 
 		{ // Update inputs
 			if (!freezeInput) {
@@ -110,6 +112,7 @@ class Player extends FlxSprite
 				if (FlxG.keys.pressed.TWO) wep2 = true;
 				if (FlxG.keys.justPressed.SPACE) jump = true;
 				if (FlxG.keys.pressed.J) hook = true;
+				if (FlxG.keys.pressed.K) attack = true;
 			}
 
 			var dirPoint:FlxPoint = FlxPoint.get();
@@ -190,7 +193,6 @@ class Player extends FlxSprite
 				// Conserve swinging
 				if (swingVelo.y != 0)
 				{
-
 					velocity.y = swingVelo.y;
 					swingVelo.y = 0;
 				}
@@ -233,6 +235,12 @@ class Player extends FlxSprite
 						hookPoint.copyFrom(getMidpoint());
 						switchState(HOOKING);
 					}
+				}
+
+				// Attacking
+				if (attack)
+				{
+					switchState(ATTACKING);
 				}
 			}
 		}
@@ -289,6 +297,9 @@ class Player extends FlxSprite
 		{
 			wallOn = FlxObject.NONE;
 		}
+		else if (state == ATTACKING)
+		{
+		}
 		state = newState;
 
 		// Entering
@@ -320,6 +331,10 @@ class Player extends FlxSprite
 			velocity.set();
 			acceleration.set();
 			swingVelo.set();
+		}
+		else if (state == ATTACKING)
+		{
+			animation.play("attack1");
 		}
 	}
 }
