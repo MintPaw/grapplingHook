@@ -112,7 +112,22 @@ class Player extends FlxSprite
 				if (FlxG.mouse.justPressed) hook = true;
 			}
 
-			angleFacing = FlxAngle.angleBetweenMouse(this, false);
+			var dirPoint:FlxPoint = FlxPoint.get();
+			if (left) dirPoint.x -= 1;
+			if (right) dirPoint.x += 1;
+			if (up) dirPoint.y -= 1;
+			if (down) dirPoint.y += 1;
+
+			if (dirPoint.x == 1 && dirPoint.y == 0) angleFacing = 0;
+			else if (dirPoint.x == 1 && dirPoint.y == -1) angleFacing = Math.PI/4;
+			else if (dirPoint.x == 0 && dirPoint.y == -1) angleFacing = Math.PI/2;
+			else if (dirPoint.x == -1 && dirPoint.y == -1) angleFacing = 3*Math.PI/4;
+			else if (dirPoint.x == -1 && dirPoint.y == 0) angleFacing = Math.PI;
+			else if (dirPoint.x == -1 && dirPoint.y == 1) angleFacing = 5*Math.PI/4;
+			else if (dirPoint.x == 0 && dirPoint.y == 1) angleFacing = 3*Math.PI/2;
+			else if (dirPoint.x == 1 && dirPoint.y == 1) angleFacing = 7*Math.PI/4;
+			trace(up, down, left, right, dirPoint, angleFacing*(180/Math.PI));
+			angleFacing = -angleFacing;
 		}
 
 		{ // Update weapon
