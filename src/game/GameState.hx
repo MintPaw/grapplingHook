@@ -26,6 +26,7 @@ class GameState extends FlxState
 	private var _tilemap:FlxTilemapExt;
 	private var _canvas:FlxSprite;
 	private var _fader:FlxSprite;
+	private var _hud:Hud;
 
 	private var _player:Player;
 
@@ -224,6 +225,10 @@ class GameState extends FlxState
 			FlxG.camera.follow(_player, FlxCameraFollowStyle.PLATFORMER);
 		}
 
+		{ // Setup hud
+			_hud = new Hud();
+		}
+
 		{ // Setup canvas
 			_canvas = new FlxSprite();
 			_canvas.makeGraphic(
@@ -240,6 +245,7 @@ class GameState extends FlxState
 		add(_fader);
 		add(_canvas);
 		add(_aiBlocks);
+		add(_hud);
 	}
 
 	override public function update(elapsed:Float):Void
